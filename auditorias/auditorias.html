@@ -74,9 +74,9 @@
 </section>
 <section id="cuestionario" class="card panel">
   <h2>Cuestionario de auditoría</h2>
-  <p class="note">Selecciona un tipo de auditoría en el alta y pulsa “Cargar cuestionario tipo”. Las respuestas se guardan dentro de la auditoría como evidencia estructurada.</p>
+  <p class="note">Selecciona un tipo de auditoría en el alta y pulsa “Cargar cuestionario tipo”. Las respuestas se guardan dentro de la auditoría como evidencia estructurada. Marca si se cumple, no se cumple, es parcial o no aplica, y añade evidencia y comentario.</p>
   <div class="form-grid no-print"><div><label>Tipo cuestionario</label><select id="questionTemplate" onchange="renderQuestions(this.value)"><option>Producto</option><option>Proceso</option><option>Pintura</option><option>Almacén</option><option>Sistema</option><option>Calibración</option></select></div><div style="align-self:end"><button onclick="renderQuestions(document.getElementById('questionTemplate').value)">Cargar preguntas</button></div></div><br>
-  <div id="questionsContainer"></div>
+  <div id="questionAuditTarget" class="note" style="margin:8px 0 12px"></div><div id="questionsContainer"></div><p class="no-print"><button onclick="saveQuestionnaireOnly()">Guardar cuestionario en Supabase</button> <button class="secondary" onclick="renderQuestions(document.getElementById('questionTemplate').value)">Reiniciar preguntas del tipo</button></p>
 </section>
 <section id="seguimiento" class="card panel">
   <h2>Seguimiento de auditorías y acciones</h2>
@@ -98,64 +98,167 @@ let audits=[]; let incidencias=[]; let currentEditId=null; let currentQuestions=
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const QUESTION_TEMPLATES={
 Producto:[
- '¿La pieza auditada corresponde a la referencia, revisión y plano vigente?',
- '¿Se identifican correctamente lote, OF, trazabilidad y estado de inspección?',
- '¿Las cotas críticas o características especiales están controladas según pauta?',
- '¿La pieza está libre de golpes, rebabas, virutas, oxidación o contaminación?',
- '¿Se han revisado requisitos específicos de cliente y embalaje?',
- '¿Los registros dimensionales o evidencias están disponibles y son trazables?',
- '¿Se confirma que no existe mezcla de piezas OK/NOK o de revisiones?',
- '¿La disposición del producto no conforme está claramente definida?'
+ '¿La muestra auditada corresponde exactamente a cliente, referencia, revisión de plano, especificación y pedido/OF vigente?',
+ '¿La identificación física de la pieza/lote permite trazabilidad completa hasta OF, lote de material, operación, fecha y responsable?',
+ '¿La revisión de plano/especificación usada en la inspección coincide con la revisión vigente en el sistema documental?',
+ '¿Están identificadas las características especiales, críticas, KPC/KCC o requisitos específicos de cliente aplicables al producto?',
+ '¿Se dispone de pauta de control, plan de control o instrucción de inspección aplicable a la referencia auditada?',
+ '¿Las cotas críticas o características especiales se han verificado con la frecuencia definida?',
+ '¿La evidencia dimensional disponible demuestra conformidad frente a tolerancias de plano?',
+ '¿Los medios de medición utilizados son adecuados para la tolerancia y están dentro de calibración/verificación?',
+ '¿Existe coherencia entre informe 3D, autocontrol, pauta de control y estado final de la pieza?',
+ '¿La pieza está libre de rebabas, aristas cortantes, golpes, marcas, oxidación, suciedad, virutas o contaminación?',
+ '¿Las roscas, taladros, avellanados y zonas funcionales se han comprobado con el calibre o método definido?',
+ '¿Las superficies funcionales cumplen rugosidad, acabado, protección y criterios visuales aplicables?',
+ '¿La identificación/marcaje de la pieza cumple plano, norma cliente y requisitos de trazabilidad?',
+ '¿El embalaje protege la pieza frente a golpes, corrosión, mezcla y contaminación?',
+ '¿El etiquetado exterior del embalaje coincide con referencia, lote, cantidad, cliente y estado de calidad?',
+ '¿Se verifica que no existe mezcla de referencias, revisiones, clientes, lotes OK/NOK o piezas pendientes de decisión?',
+ '¿La cantidad registrada en sistema coincide con la cantidad física inspeccionada/expedida?',
+ '¿Las piezas no conformes detectadas durante la auditoría están segregadas y bloqueadas de forma inmediata?',
+ '¿Se ha revisado si existen reclamaciones previas del mismo cliente/referencia/defectología?',
+ '¿Las acciones correctivas anteriores asociadas al producto siguen implantadas y son eficaces?',
+ '¿Los requisitos específicos de cliente están incorporados al control del producto?',
+ '¿Cuando aplica AS/EN 9100, se evidencia prevención de FOD, control de trazabilidad y liberación conforme?',
+ '¿Cuando aplica IATF, el producto está vinculado a plan de control, características especiales y requisitos cliente?',
+ '¿El criterio de aceptación/rechazo es claro para el personal que inspecciona el producto?',
+ '¿La liberación final está realizada por personal autorizado y con registros completos?',
+ '¿La auditoría de producto concluye sin producto dudoso pendiente de decisión?'
 ],
 Proceso:[
- '¿La operación auditada se realiza según hoja de proceso, pauta o instrucción vigente?',
- '¿El operario conoce las características críticas y criterios de aceptación?',
- '¿Los útiles, amarres y herramientas están identificados y en estado correcto?',
- '¿Los parámetros de máquina coinciden con el estándar aprobado?',
- '¿La primera pieza, autocontrol y frecuencia de control están registrados?',
- '¿Los medios de medición usados están calibrados y son adecuados?',
- '¿Hay segregación física y documental de producto no conforme?',
- '¿Las acciones derivadas de NC anteriores siguen implantadas y eficaces?'
+ '¿La operación auditada está definida en flujo de proceso, hoja de proceso, instrucción, gama u OF vigente?',
+ '¿El operario trabaja con documentación actualizada y disponible en el puesto?',
+ '¿El operario conoce la operación, riesgos, defectos frecuentes, características críticas y reacción ante NOK?',
+ '¿La preparación de máquina/útil/herramienta está aprobada antes de producir?',
+ '¿La primera pieza o arranque de lote está realizado, registrado y validado según procedimiento?',
+ '¿Los parámetros de proceso coinciden con los valores estándar aprobados o están justificados?',
+ '¿Los útiles, amarres, mordazas, posicionadores y referencias de apoyo están identificados y en buen estado?',
+ '¿Las herramientas de corte, brocas, machos, plaquitas o consumibles están controladas frente a desgaste/rotura?',
+ '¿La pieza se posiciona siempre de forma repetible y sin posibilidad razonable de error?',
+ '¿Existen poka-yokes, atributos, calibres o ayudas visuales para evitar errores repetitivos?',
+ '¿El autocontrol se realiza con la frecuencia definida y queda registrado?',
+ '¿Los registros de control incluyen fecha, lote, resultado, responsable y reacción ante desviación?',
+ '¿Los medios de medición del puesto están identificados, calibrados y protegidos?',
+ '¿La trazabilidad del material se mantiene durante todas las fases del proceso?',
+ '¿Existe separación física entre piezas OK, pendientes, en curso, bloqueadas y NOK?',
+ '¿Las piezas en espera entre operaciones están protegidas e identificadas?',
+ '¿El entorno de trabajo evita contaminación, golpes, oxidación, mezclas y daños superficiales?',
+ '¿Los cambios de turno comunican incidencias, ajustes, piezas dudosas y controles pendientes?',
+ '¿Las desviaciones de proceso se registran y escalan según procedimiento?',
+ '¿Los retrabajos o reprocesos están autorizados, identificados y verificados después de ejecutarse?',
+ '¿Las NC internas o externas previas del proceso se han traducido en acciones visibles en el puesto?',
+ '¿Se verifica la eficacia de las acciones implantadas por reclamaciones anteriores?',
+ '¿La capacidad del proceso o estabilidad se revisa cuando hay repetición de defectos?',
+ '¿Los cambios de proceso, herramienta, útil, máquina o proveedor están controlados antes de producir?',
+ '¿La formación/competencia del personal está evidenciada para la operación auditada?',
+ '¿Se cumplen los requisitos IATF aplicables a auditoría de proceso, plan de control, PFMEA y reacción?',
+ '¿Cuando aplica AS/EN 9100, se controla riesgo operacional, configuración, trazabilidad y prevención FOD?',
+ '¿El proceso auditado puede demostrar que produce conforme de forma repetible?',
+ '¿La auditoría identifica oportunidades concretas para reducir recurrencia, PPM o rechazo interno?'
 ],
 Pintura:[
- '¿La especificación de pintura aplicable está identificada y vigente?',
- '¿La preparación superficial cumple requisitos de limpieza, granallado o desengrase?',
- '¿Se controlan mezcla, vida útil, viscosidad y condiciones ambientales?',
- '¿El espesor de capa se mide con equipo calibrado y frecuencia definida?',
- '¿Las zonas protegidas/enmascaradas corresponden al plano o instrucción?',
- '¿El secado/curado cumple tiempo, temperatura y manipulación requerida?',
- '¿El acabado está libre de descuelgues, falta de pintura, contaminación o golpes?',
- '¿El embalaje evita daños de pintura durante almacenamiento/transporte?'
+ '¿La especificación de pintura, plano, color, sistema de recubrimiento y revisión aplicable están identificados?',
+ '¿La pieza/lote de entrada está liberada y libre de defectos previos que afecten al pintado?',
+ '¿La preparación superficial requerida está definida: limpieza, desengrase, granallado, lijado o conversión?',
+ '¿La superficie antes de pintar está libre de aceite, polvo, humedad, óxido, sales, rebabas y contaminación?',
+ '¿Se controlan condiciones ambientales: temperatura, humedad, punto de rocío y ventilación cuando aplica?',
+ '¿Se registra la mezcla de pintura: producto, lote, catalizador, proporción, dilución y vida útil/pot-life?',
+ '¿El material de pintura está dentro de caducidad y almacenado según ficha técnica?',
+ '¿Los equipos de aplicación están limpios, mantenidos y adecuados al sistema de pintura?',
+ '¿Las boquillas, pistolas, presión, caudal, distancia y método de aplicación están definidos/controlados?',
+ '¿Las zonas a enmascarar/proteger coinciden con plano, instrucción o requisito del cliente?',
+ '¿Se evita pintar zonas funcionales, superficies de montaje, roscas o apoyos cuando no está permitido?',
+ '¿El espesor de capa húmeda/seca se controla con equipo calibrado y frecuencia definida?',
+ '¿Los registros de espesor incluyen puntos medidos, valores, lote, fecha y responsable?',
+ '¿Se verifica adherencia, curado, aspecto, color, brillo o rugosidad cuando la especificación lo exige?',
+ '¿El secado/curado respeta tiempos, temperatura, manipulación y apilado mínimo?',
+ '¿Las piezas pintadas se manipulan evitando marcas, golpes, huellas, contaminación o pegado entre piezas?',
+ '¿El acabado final está libre de descuelgues, piel de naranja, cráteres, falta de cubrición, inclusiones y poros?',
+ '¿Existe criterio claro de aceptación visual y está disponible para el personal?',
+ '¿Las no conformidades de pintura se segregan y se define reproceso autorizado?',
+ '¿El reproceso de pintura mantiene trazabilidad y verificación posterior?',
+ '¿El embalaje protege pintura y evita contacto directo, humedad o rozamiento durante transporte?',
+ '¿Se revisan reclamaciones anteriores de pintura y se comprueba eficacia de acciones?',
+ '¿Los residuos, disolventes, envases y seguridad ambiental se gestionan según procedimiento?',
+ '¿El personal que pinta o inspecciona dispone de competencia/formación adecuada?',
+ '¿Los equipos de medición de espesor, temperatura o humedad están controlados y calibrados?',
+ '¿La auditoría confirma que el proceso de pintura es repetible y conforme a cliente/norma?'
 ],
 'Almacén':[
- '¿El material está identificado con referencia, lote, estado y trazabilidad?',
- '¿Existe separación clara entre OK, pendiente, bloqueado y rechazado?',
- '¿Las condiciones de almacenamiento evitan golpes, oxidación o contaminación?',
- '¿La rotación FIFO/FEFO se cumple cuando aplica?',
- '¿El embalaje protege adecuadamente el producto y mantiene identificación?',
- '¿Las piezas no conformes están bloqueadas físicamente y en sistema?',
- '¿Los movimientos de material quedan registrados y son trazables?',
- '¿No existen mezclas de referencias, revisiones o clientes?'
+ '¿El material recibido o almacenado está identificado con referencia, lote, proveedor, cliente y estado?',
+ '¿Existe segregación clara entre material OK, pendiente de inspección, bloqueado, rechazado y devolución?',
+ '¿La trazabilidad se mantiene desde recepción hasta expedición o siguiente operación?',
+ '¿No existen piezas sin etiqueta, etiqueta ilegible o información contradictoria?',
+ '¿Las cantidades físicas coinciden con sistema, etiquetas y documentación?',
+ '¿Se evita mezcla de referencias, revisiones, clientes, lotes o estados de calidad?',
+ '¿La ubicación de almacenamiento está definida y permite localizar el material sin riesgo de error?',
+ '¿Se aplica FIFO/FEFO cuando corresponde por fecha, lote, caducidad o revisión?',
+ '¿Los materiales sensibles a oxidación, humedad, golpes o contaminación están protegidos?',
+ '¿El embalaje interno y externo protege el producto durante manipulación y transporte?',
+ '¿Las piezas pesadas, frágiles o mecanizadas se almacenan sin deformación ni daño superficial?',
+ '¿Los contenedores, palets, cajas o separadores están limpios y en estado adecuado?',
+ '¿Los productos no conformes están bloqueados físicamente y también en sistema?',
+ '¿Las autorizaciones de uso bajo concesión/desviación están identificadas y vigentes?',
+ '¿Las devoluciones de cliente están identificadas, segregadas y trazadas hasta análisis?',
+ '¿Los movimientos de entrada/salida quedan registrados con fecha, cantidad y responsable?',
+ '¿La expedición verifica referencia, cantidad, cliente, embalaje, etiqueta y documentación antes de salida?',
+ '¿Las zonas de carga evitan mezcla entre pedidos o clientes?',
+ '¿El personal conoce el criterio de producto bloqueado y reacción ante duda?',
+ '¿Existen controles para evitar expedición de material pendiente de calidad?',
+ '¿Las condiciones de orden, limpieza y seguridad del almacén son adecuadas?',
+ '¿Los materiales de pintura/químicos se almacenan según caducidad, seguridad y ficha técnica?',
+ '¿Se revisan incidencias de almacén: golpes, mezclas, errores de cantidad o identificación?',
+ '¿Las acciones derivadas de incidencias anteriores de almacén siguen implantadas?',
+ '¿La auditoría confirma que almacén mantiene conformidad y trazabilidad del producto?'
 ],
 Sistema:[
- '¿Las NC/reclamaciones están registradas, evaluadas y cerradas en plazo?',
- '¿Las acciones correctivas tienen causa raíz documentada y responsable?',
- '¿Se verifica la eficacia de acciones implantadas?',
- '¿Se han considerado riesgos y oportunidades asociados al proceso auditado?',
- '¿Los documentos aplicables están controlados y en revisión vigente?',
- '¿La competencia del personal afectado está definida y evidenciada?',
- '¿Los indicadores del proceso se revisan y generan acciones cuando procede?',
- '¿Se cumplen requisitos ISO 9001/IATF/AS-EN 9100 aplicables?'
+ '¿El alcance del sistema de gestión está definido y cubre los procesos auditados?',
+ '¿Los procesos tienen entradas, salidas, responsables, indicadores, riesgos y criterios de control definidos?',
+ '¿La organización revisa riesgos y oportunidades relacionados con reclamaciones, incidencias y NC?',
+ '¿Los objetivos de calidad son medibles, revisados y coherentes con reclamaciones/PPM/cliente?',
+ '¿La documentación aplicable está controlada, vigente y disponible donde se usa?',
+ '¿Los registros de calidad son legibles, recuperables, protegidos y conservados según requisito?',
+ '¿Las competencias necesarias están definidas y existen evidencias de formación o cualificación?',
+ '¿Los proveedores externos que afectan calidad se controlan y evalúan?',
+ '¿Las reclamaciones de cliente se registran, analizan y responden en plazo?',
+ '¿Las NC internas y externas tienen contención, causa raíz, acción correctiva y responsable?',
+ '¿La causa raíz se analiza con método adecuado y no se limita a error humano sin análisis?',
+ '¿Las acciones correctivas tienen fecha compromiso y seguimiento hasta cierre?',
+ '¿Se verifica la eficacia de acciones correctivas frente a recurrencia?',
+ '¿Las auditorías internas cubren procesos, producto, sistema y requisitos cliente aplicables?',
+ '¿La planificación de auditorías considera importancia del proceso, cambios, resultados y reclamaciones?',
+ '¿Los resultados de auditoría se comunican a responsables y dirección?',
+ '¿Las salidas de revisión por dirección consideran indicadores, auditorías, reclamaciones y acciones?',
+ '¿El control de producto no conforme evita uso o entrega no intencionada?',
+ '¿Los cambios que afectan producto/proceso están planificados, aprobados y comunicados?',
+ '¿Se mantienen evidencias de cumplimiento de requisitos legales/reglamentarios cuando aplican?',
+ '¿Para IATF se consideran requisitos específicos de cliente, plan de control, AMFE y auditorías de proceso/producto?',
+ '¿Para AS/EN 9100 se consideran riesgo operacional, configuración, producto falsificado y FOD cuando aplica?',
+ '¿Los indicadores muestran tendencia y se actúa cuando hay deterioro?',
+ '¿La mejora continua está basada en datos, riesgos, auditorías y reclamaciones?',
+ '¿El sistema permite demostrar cierre eficaz de NC abiertas y prevención de recurrencia?'
 ],
 'Calibración':[
- '¿El equipo de medición está identificado y dentro de plazo de calibración?',
- '¿El equipo es adecuado para la tolerancia y característica a medir?',
- '¿Existe certificado o registro de verificación disponible?',
- '¿El estado de calibración está visible o controlado en sistema?',
- '¿Se evalúa el impacto cuando un equipo queda fuera de calibración?',
- '¿Los patrones usados son trazables a referencias reconocidas?',
- '¿El uso, almacenamiento y conservación evita deterioro del equipo?',
- '¿La frecuencia de calibración está justificada por uso, criticidad e histórico?'
+ '¿El equipo de medición auditado está identificado de forma única y vinculado a su ficha/registro?',
+ '¿El equipo está dentro de plazo de calibración/verificación?',
+ '¿El estado de calibración es visible para el usuario o controlado en sistema?',
+ '¿El equipo es adecuado para la característica y tolerancia que se pretende medir?',
+ '¿La resolución/incertidumbre del equipo es compatible con la tolerancia del producto?',
+ '¿Existe certificado de calibración/verificación disponible y trazable?',
+ '¿El certificado incluye identificación del equipo, patrón, resultado, fecha y decisión de conformidad?',
+ '¿Los patrones utilizados son trazables a referencias reconocidas y están dentro de plazo?',
+ '¿El equipo se almacena y manipula evitando golpes, suciedad, humedad o deterioro?',
+ '¿El usuario conoce limitaciones, método de uso y comprobaciones previas del equipo?',
+ '¿Se realizan verificaciones intermedias cuando el uso, criticidad o histórico lo requiere?',
+ '¿Existe criterio para bloquear equipos vencidos, dañados o dudosos?',
+ '¿Cuando un equipo queda fuera de tolerancia se evalúa impacto sobre producto medido previamente?',
+ '¿La frecuencia de calibración se revisa según uso, criticidad, estabilidad e histórico?',
+ '¿Los equipos dados de baja o fuera de servicio están segregados y no pueden usarse?',
+ '¿Los equipos personales o no controlados están prohibidos o gestionados según procedimiento?',
+ '¿La calibración externa se realiza con proveedor aprobado o técnicamente competente?',
+ '¿Los registros permiten conocer qué equipo se utilizó para liberar producto crítico?',
+ '¿Las acciones por incidencias de medición/calibración se siguen hasta cierre?',
+ '¿El sistema de calibración contribuye a prevenir aceptación errónea de producto NOK?'
 ]
 };
 function $(id){return document.getElementById(id)}
@@ -209,9 +312,25 @@ function editAudit(id){const a=audits.find(x=>x.id===id);if(!a)return;currentEdi
 async function deleteAudit(id){if(!confirm('¿Eliminar auditoría?'))return;try{const {error}=await supabaseClient.from('auditorias_internas').delete().eq('id',id);if(error)throw error;audits=audits.filter(a=>a.id!==id);localStorage.setItem('auditorias_internas_backup',JSON.stringify(audits));renderAll();toast('Auditoría eliminada en Supabase');}catch(e){console.error(e);toast('Error eliminando en Supabase','error')}}
 function clearAuditForm(){currentEditId=null;currentQuestions=[];$('editBanner').style.display='none';$('btnSaveAudit').textContent='Guardar auditoría';['aud_numero','aud_fecha_planificada','aud_fecha_realizada','aud_cliente','aud_referencia','aud_defectologia','aud_responsable','aud_auditor','aud_fecha_compromiso','aud_motivo','aud_resultado','aud_hallazgos','aud_acciones'].forEach(id=>$(id).value='');$('aud_estado').value='Planificada';$('aud_tipo').value='Producto';$('aud_norma').value='ISO 9001';renderQuestionList();}
 function loadTemplateQuestions(){const t=$('aud_tipo').value;currentQuestions=(QUESTION_TEMPLATES[t]||[]).map(q=>({pregunta:q,respuesta:'Pendiente',evidencia:'',comentario:''}));$('questionTemplate').value=t;renderQuestionList();showPanel('cuestionario');toast('Cuestionario cargado: '+t)}
-function renderQuestions(t){currentQuestions=(QUESTION_TEMPLATES[t]||[]).map(q=>({pregunta:q,respuesta:'Pendiente',evidencia:'',comentario:''}));renderQuestionList();}
-function renderQuestionList(){const c=$('questionsContainer');if(!currentQuestions.length){c.innerHTML='<p class="note">No hay cuestionario cargado.</p>';return}c.innerHTML=currentQuestions.map((q,i)=>`<div class="question-card"><div class="question-head"><div class="question-text">${i+1}. ${esc(q.pregunta)}</div><div><label>Resultado</label><select onchange="currentQuestions[${i}].respuesta=this.value"><option ${q.respuesta==='Pendiente'?'selected':''}>Pendiente</option><option ${q.respuesta==='Conforme'?'selected':''}>Conforme</option><option ${q.respuesta==='No conforme'?'selected':''}>No conforme</option><option ${q.respuesta==='Observación'?'selected':''}>Observación</option><option ${q.respuesta==='No aplica'?'selected':''}>No aplica</option></select></div><div><label>Evidencia</label><input value="${esc(q.evidencia)}" onchange="currentQuestions[${i}].evidencia=this.value" placeholder="Registro, foto, plano, lote..."></div></div><label>Comentario</label><textarea onchange="currentQuestions[${i}].comentario=this.value">${esc(q.comentario)}</textarea></div>`).join('');}
-function openQuestionnaire(id){const a=audits.find(x=>x.id===id);currentQuestions=parseMaybeJson(a?.cuestionario);if(!currentQuestions.length){currentQuestions=(QUESTION_TEMPLATES[a?.tipo_auditoria||'Producto']||[]).map(q=>({pregunta:q,respuesta:'Pendiente',evidencia:'',comentario:''}))}renderQuestionList();showPanel('cuestionario')}
+function renderQuestions(t){currentQuestions=(QUESTION_TEMPLATES[t]||[]).map(q=>({pregunta:q,respuesta:'Pendiente',evidencia:'',comentario:''}));$('questionAuditTarget').innerHTML='<b>Cuestionario nuevo:</b> '+esc(t)+'. Para guardarlo asociado a una auditoría, primero crea/edita una auditoría o abre Cuest. desde Seguimiento.';renderQuestionList();}
+function renderQuestionList(){const c=$('questionsContainer');if(!currentQuestions.length){c.innerHTML='<p class="note">No hay cuestionario cargado.</p>';return}c.innerHTML=currentQuestions.map((q,i)=>`<div class="question-card"><div class="question-head"><div class="question-text">${i+1}. ${esc(q.pregunta)}</div><div><label>Resultado</label><select onchange="currentQuestions[${i}].respuesta=this.value"><option ${q.respuesta==='Pendiente'?'selected':''}>Pendiente</option><option ${q.respuesta==='Sí cumple'||q.respuesta==='Conforme'?'selected':''}>Sí cumple</option><option ${q.respuesta==='No cumple'||q.respuesta==='No conforme'?'selected':''}>No cumple</option><option ${q.respuesta==='Cumple parcial'||q.respuesta==='Observación'?'selected':''}>Cumple parcial</option><option ${q.respuesta==='No aplica'?'selected':''}>No aplica</option></select></div><div><label>Evidencia</label><input value="${esc(q.evidencia)}" onchange="currentQuestions[${i}].evidencia=this.value" placeholder="Registro, foto, plano, lote..."></div></div><label>Comentario</label><textarea onchange="currentQuestions[${i}].comentario=this.value">${esc(q.comentario)}</textarea></div>`).join('');}
+function openQuestionnaire(id){const a=audits.find(x=>x.id===id);currentEditId=id;currentQuestions=parseMaybeJson(a?.cuestionario);if(!currentQuestions.length){currentQuestions=(QUESTION_TEMPLATES[a?.tipo_auditoria||'Producto']||[]).map(q=>({pregunta:q,respuesta:'Pendiente',evidencia:'',comentario:''}))}$('questionTemplate').value=a?.tipo_auditoria||'Producto';$('questionAuditTarget').innerHTML='<b>Auditoría seleccionada:</b> '+esc(a?.numero||id)+' · '+esc(a?.tipo_auditoria||'')+' · '+esc(a?.norma||'');renderQuestionList();showPanel('cuestionario')}
+
+async function saveQuestionnaireOnly(){
+  if(!currentEditId){toast('Abre primero una auditoría desde Seguimiento o guarda el alta de auditoría','error');return}
+  const a=audits.find(x=>x.id===currentEditId);
+  if(!a){toast('No encuentro la auditoría seleccionada','error');return}
+  try{
+    const cuestionario=JSON.stringify(currentQuestions||[]);
+    const {error}=await supabaseClient.from('auditorias_internas').update({cuestionario,updated_at:new Date().toISOString()}).eq('id',currentEditId);
+    if(error)throw error;
+    a.cuestionario=parseMaybeJson(cuestionario);
+    localStorage.setItem('auditorias_internas_backup',JSON.stringify(audits));
+    renderAll();
+    toast('Cuestionario guardado en Supabase');
+  }catch(e){console.error(e);toast('Error guardando cuestionario en Supabase','error')}
+}
+
 function showPanel(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(b=>b.classList.add('secondary'));}
 if(!supabaseClient){toast('No carga librería Supabase','error')}else loadData();
 </script>
