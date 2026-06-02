@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de Auditorías Internas - Calidad</title>
+<style>
+:root{--bg:#eef3f9;--card:#fff;--ink:#0f172a;--muted:#607089;--line:#d3dce8;--brand:#174f8a;--brand2:#0f2d4f;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--violet:#7c3aed;--cyan:#0891b2;--shadow:0 12px 28px rgba(15,23,42,.10);--radius:18px}
+*{box-sizing:border-box} body{margin:0;background:linear-gradient(135deg,#eaf1f9,#f8fbff);color:var(--ink);font-family:Inter,Arial,Helvetica,sans-serif;font-size:14px} header{background:linear-gradient(135deg,#0f2d4f,#174f8a,#7c3aed);color:white;padding:24px 36px;box-shadow:var(--shadow)} h1{margin:0 0 6px;font-size:25px} header p{margin:0;color:#dbeafe;line-height:1.45} main{max-width:1720px;margin:20px auto;padding:0 20px 40px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px} h2{font-size:18px;margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid var(--line);color:var(--brand2)} h3{font-size:15px;margin:0 0 10px;color:var(--brand2)} label{display:block;font-size:11px;color:#64748b;font-weight:900;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px} input,select,textarea{border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:white;width:100%;font:inherit} textarea{min-height:76px;resize:vertical} button,.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;background:var(--brand);color:white;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px} button.secondary,.btn.secondary{background:#e5e7eb;color:#111827} button.warning{background:var(--warn)} button.danger{background:var(--bad)} button.ok{background:var(--ok)}.topbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.tabs{display:flex;gap:10px;justify-content:center;position:sticky;top:0;z-index:5;border-top:5px solid var(--violet);flex-wrap:wrap}.tabs button{min-width:150px}.panel{display:none}.panel.active{display:block}.toolbar{display:grid;grid-template-columns:160px 160px 180px 180px 1fr auto;gap:10px;align-items:end}.kpis{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:12px}.kpi{padding:14px;border-top:5px solid var(--brand);background:white;border-radius:16px;border-left:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.kpi:nth-child(2){border-color:var(--ok)}.kpi:nth-child(3){border-color:var(--warn)}.kpi:nth-child(4){border-color:var(--bad)}.kpi:nth-child(5){border-color:var(--violet)}.kpi:nth-child(6){border-color:var(--cyan)}.kpi div:first-child{font-size:12px;color:var(--muted);margin-bottom:6px}.kpi strong{font-size:26px;color:var(--brand2)}.kpi small{display:block;color:#64748b;font-size:11px;margin-top:4px}.form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.full{grid-column:1/-1}.half{grid-column:span 2}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;max-height:650px} table{width:100%;border-collapse:collapse;min-width:1400px;background:white} th,td{padding:9px 10px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top;font-size:12px} th{position:sticky;top:0;background:#ede9fe;color:#2e1065;z-index:1;text-transform:uppercase;font-size:11px} tr:hover td{background:#f8fafc}.badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-weight:900;font-size:11px;white-space:nowrap}.ok-b{background:#dcfce7;color:#166534}.warn-b{background:#fef3c7;color:#92400e}.bad-b{background:#fee2e2;color:#991b1b}.info-b{background:#e0f2fe;color:#075985}.violet-b{background:#ede9fe;color:#5b21b6}.small-actions{display:flex;gap:6px;flex-wrap:wrap}.small-actions button{padding:7px 9px;font-size:11px}.question-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px;margin-bottom:10px}.question-head{display:grid;grid-template-columns:1fr 150px 1fr;gap:10px;align-items:start}.question-text{font-weight:800;color:#0f2d4f}.note{font-size:12px;color:var(--muted);line-height:1.45}.risk-box{border:1px solid var(--line);border-left:6px solid var(--bad);background:#fff5f5;border-radius:14px;padding:12px;margin-bottom:10px}.suggestion-grid{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:12px}.suggestion{border:1px solid var(--line);border-radius:14px;background:#f8fafc;padding:12px}.toast{position:fixed;right:22px;bottom:22px;padding:12px 16px;border-radius:10px;background:#111827;color:white;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);transition:.2s;z-index:99}.toast.show{opacity:1;transform:translateY(0)}.toast.ok{background:var(--ok)}.toast.error{background:var(--bad)}.print-only{display:none}@media print{header,.tabs,.toolbar,.no-print,.small-actions,button,.btn{display:none!important}.panel{display:block!important}.card{box-shadow:none;border:1px solid #ccc}.print-only{display:block}.table-wrap{max-height:none;overflow:visible}body{background:white}}@media(max-width:1200px){.toolbar,.kpis,.form-grid,.suggestion-grid,.question-head{grid-template-columns:1fr}.half{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div>
+      <h1>Plan de Auditorías Internas</h1>
+      <p><b>Módulo de auditorías conectado a NC / reclamaciones.</b><br>Planificación anual, auditorías mensuales, cuestionarios por tipo, responsables, resultados, acciones y seguimiento de hallazgos para ISO 9001 / IATF 16949 / AS-EN 9100.</p>
+    </div>
+    <a class="btn secondary" href="index.html">← Volver a reclamaciones</a>
+  </div>
+</header>
+<main>
+<section class="card toolbar no-print">
+  <div><label>Año</label><select id="yearFilter"><option value="">Todos</option></select></div>
+  <div><label>Mes</label><select id="monthFilter"><option value="">Todos</option><option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option><option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option><option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select></div>
+  <div><label>Tipo</label><select id="typeFilter"><option value="">Todos</option><option>Producto</option><option>Proceso</option><option>Pintura</option><option>Almacén</option><option>Sistema</option><option>Calibración</option></select></div>
+  <div><label>Norma</label><select id="normFilter"><option value="">Todas</option><option>ISO 9001</option><option>IATF 16949</option><option>AS/EN 9100</option><option>Cliente</option><option>Interna</option></select></div>
+  <div><label>Buscar</label><input id="search" placeholder="Cliente, referencia, auditor, responsable, motivo..."></div>
+  <button onclick="window.print()">Imprimir / PDF</button>
+</section>
+<section class="kpis no-print">
+  <div class="kpi"><div>Total auditorías</div><strong id="kpiTotal">0</strong><small>Ámbito filtrado</small></div>
+  <div class="kpi"><div>Planificadas</div><strong id="kpiPlan">0</strong><small>Pendientes de realizar</small></div>
+  <div class="kpi"><div>En curso</div><strong id="kpiCurso">0</strong><small>Abiertas</small></div>
+  <div class="kpi"><div>Vencidas</div><strong id="kpiVencidas">0</strong><small>Riesgo auditoría</small></div>
+  <div class="kpi"><div>NC auditoría abiertas</div><strong id="kpiNcAbiertas">0</strong><small>Acciones pendientes</small></div>
+  <div class="kpi"><div>Cerradas</div><strong id="kpiCerradas">0</strong><small>Con resultado final</small></div>
+</section>
+<section class="card tabs no-print">
+  <button onclick="showPanel('plan')">Plan anual</button>
+  <button class="secondary" onclick="showPanel('alta')">Alta / edición auditoría</button>
+  <button class="secondary" onclick="showPanel('cuestionario')">Cuestionario</button>
+  <button class="secondary" onclick="showPanel('seguimiento')">Seguimiento</button>
+  <button class="secondary" onclick="showPanel('riesgos')">Auditorías sugeridas</button>
+  <button class="warning" onclick="generatePlanFromNCs()">Generar plan desde NC</button>
+</section>
+<section id="plan" class="card panel active">
+  <h2>Plan anual de auditorías</h2>
+  <p class="note">Vista anual por meses. El plan puede generarse desde NC internas/externas y después ajustarse manualmente. Las auditorías vencidas o con NC abiertas deben revisarse en reunión mensual de calidad.</p>
+  <div id="annualPlan"></div>
+</section>
+<section id="alta" class="card panel">
+  <h2>Alta / edición de auditoría interna</h2>
+  <div id="editBanner" class="risk-box" style="display:none"><b>Modo edición activo.</b> Se actualizará la auditoría seleccionada en Supabase.</div>
+  <div class="form-grid">
+    <div><label>Nº auditoría</label><input id="aud_numero" placeholder="AUD-2026-001"></div>
+    <div><label>Fecha planificada</label><input id="aud_fecha_planificada" type="date"></div>
+    <div><label>Fecha realizada</label><input id="aud_fecha_realizada" type="date"></div>
+    <div><label>Estado</label><select id="aud_estado"><option>Planificada</option><option>En curso</option><option>Realizada</option><option>Cerrada</option><option>Vencida</option><option>Anulada</option></select></div>
+    <div><label>Tipo auditoría</label><select id="aud_tipo" onchange="loadTemplateQuestions()"><option>Producto</option><option>Proceso</option><option>Pintura</option><option>Almacén</option><option>Sistema</option><option>Calibración</option></select></div>
+    <div><label>Norma aplicable</label><select id="aud_norma"><option>ISO 9001</option><option>IATF 16949</option><option>AS/EN 9100</option><option>Cliente</option><option>Interna</option></select></div>
+    <div><label>Cliente</label><input id="aud_cliente"></div>
+    <div><label>Referencia / proceso</label><input id="aud_referencia"></div>
+    <div><label>Defectología</label><input id="aud_defectologia" placeholder="Dimensional, porosidad, montaje..."></div>
+    <div><label>Responsable área</label><input id="aud_responsable"></div>
+    <div><label>Auditor</label><input id="aud_auditor"></div>
+    <div><label>Fecha compromiso</label><input id="aud_fecha_compromiso" type="date"></div>
+    <div class="full"><label>Motivo de auditoría</label><textarea id="aud_motivo" placeholder="Ej.: recurrencia de NC externas, severidad alta, referencia repetitiva, auditoría mensual planificada..."></textarea></div>
+    <div class="full"><label>Resultado / conclusión</label><textarea id="aud_resultado"></textarea></div>
+    <div class="full"><label>Hallazgos / NC de auditoría</label><textarea id="aud_hallazgos"></textarea></div>
+    <div class="full"><label>Acciones correctivas / preventivas</label><textarea id="aud_acciones"></textarea></div>
+  </div>
+  <p class="no-print"><button id="btnSaveAudit" onclick="saveAudit()">Guardar auditoría</button> <button class="secondary" onclick="clearAuditForm()">Limpiar</button> <button class="warning" onclick="loadTemplateQuestions()">Cargar cuestionario tipo</button></p>
+</section>
+<section id="cuestionario" class="card panel">
+  <h2>Cuestionario de auditoría</h2>
+  <p class="note">Selecciona un tipo de auditoría en el alta y pulsa “Cargar cuestionario tipo”. Las respuestas se guardan dentro de la auditoría como evidencia estructurada.</p>
+  <div class="form-grid no-print"><div><label>Tipo cuestionario</label><select id="questionTemplate" onchange="renderQuestions(this.value)"><option>Producto</option><option>Proceso</option><option>Pintura</option><option>Almacén</option><option>Sistema</option><option>Calibración</option></select></div><div style="align-self:end"><button onclick="renderQuestions(document.getElementById('questionTemplate').value)">Cargar preguntas</button></div></div><br>
+  <div id="questionsContainer"></div>
+</section>
+<section id="seguimiento" class="card panel">
+  <h2>Seguimiento de auditorías y acciones</h2>
+  <div class="table-wrap"><table><thead><tr><th>Acciones</th><th>Nº</th><th>Fecha plan.</th><th>Fecha real</th><th>Mes</th><th>Tipo</th><th>Norma</th><th>Cliente</th><th>Referencia/proceso</th><th>Defectología</th><th>Motivo</th><th>Responsable</th><th>Auditor</th><th>Estado</th><th>Resultado</th><th>Hallazgos</th><th>Acciones</th><th>Fecha compromiso</th><th>Semáforo</th></tr></thead><tbody id="auditsBody"></tbody></table></div>
+</section>
+<section id="riesgos" class="card panel">
+  <h2>Auditorías sugeridas por NC / reclamaciones</h2>
+  <p class="note">El sistema analiza la tabla <b>incidencias</b> y propone auditorías por concentración de cliente, referencia, defectología, severidad, NC abiertas y repetición. Estas propuestas no sustituyen el criterio de Calidad, sirven como entrada objetiva para el plan anual.</p>
+  <div id="riskSuggestions" class="suggestion-grid"></div>
+</section>
+</main>
+<div id="toast" class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://lsfalvcfbssqxbhlsdjx.supabase.co';
+const SUPABASE_KEY='sb_publishable_FWi5H3uAP_yWvdqCNm6xyw_GdJqDAb8';
+const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+let audits=[]; let incidencias=[]; let currentEditId=null; let currentQuestions=[];
+const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const QUESTION_TEMPLATES={
+Producto:[
+ '¿La pieza auditada corresponde a la referencia, revisión y plano vigente?',
+ '¿Se identifican correctamente lote, OF, trazabilidad y estado de inspección?',
+ '¿Las cotas críticas o características especiales están controladas según pauta?',
+ '¿La pieza está libre de golpes, rebabas, virutas, oxidación o contaminación?',
+ '¿Se han revisado requisitos específicos de cliente y embalaje?',
+ '¿Los registros dimensionales o evidencias están disponibles y son trazables?',
+ '¿Se confirma que no existe mezcla de piezas OK/NOK o de revisiones?',
+ '¿La disposición del producto no conforme está claramente definida?'
+],
+Proceso:[
+ '¿La operación auditada se realiza según hoja de proceso, pauta o instrucción vigente?',
+ '¿El operario conoce las características críticas y criterios de aceptación?',
+ '¿Los útiles, amarres y herramientas están identificados y en estado correcto?',
+ '¿Los parámetros de máquina coinciden con el estándar aprobado?',
+ '¿La primera pieza, autocontrol y frecuencia de control están registrados?',
+ '¿Los medios de medición usados están calibrados y son adecuados?',
+ '¿Hay segregación física y documental de producto no conforme?',
+ '¿Las acciones derivadas de NC anteriores siguen implantadas y eficaces?'
+],
+Pintura:[
+ '¿La especificación de pintura aplicable está identificada y vigente?',
+ '¿La preparación superficial cumple requisitos de limpieza, granallado o desengrase?',
+ '¿Se controlan mezcla, vida útil, viscosidad y condiciones ambientales?',
+ '¿El espesor de capa se mide con equipo calibrado y frecuencia definida?',
+ '¿Las zonas protegidas/enmascaradas corresponden al plano o instrucción?',
+ '¿El secado/curado cumple tiempo, temperatura y manipulación requerida?',
+ '¿El acabado está libre de descuelgues, falta de pintura, contaminación o golpes?',
+ '¿El embalaje evita daños de pintura durante almacenamiento/transporte?'
+],
+'Almacén':[
+ '¿El material está identificado con referencia, lote, estado y trazabilidad?',
+ '¿Existe separación clara entre OK, pendiente, bloqueado y rechazado?',
+ '¿Las condiciones de almacenamiento evitan golpes, oxidación o contaminación?',
+ '¿La rotación FIFO/FEFO se cumple cuando aplica?',
+ '¿El embalaje protege adecuadamente el producto y mantiene identificación?',
+ '¿Las piezas no conformes están bloqueadas físicamente y en sistema?',
+ '¿Los movimientos de material quedan registrados y son trazables?',
+ '¿No existen mezclas de referencias, revisiones o clientes?'
+],
+Sistema:[
+ '¿Las NC/reclamaciones están registradas, evaluadas y cerradas en plazo?',
+ '¿Las acciones correctivas tienen causa raíz documentada y responsable?',
+ '¿Se verifica la eficacia de acciones implantadas?',
+ '¿Se han considerado riesgos y oportunidades asociados al proceso auditado?',
+ '¿Los documentos aplicables están controlados y en revisión vigente?',
+ '¿La competencia del personal afectado está definida y evidenciada?',
+ '¿Los indicadores del proceso se revisan y generan acciones cuando procede?',
+ '¿Se cumplen requisitos ISO 9001/IATF/AS-EN 9100 aplicables?'
+],
+'Calibración':[
+ '¿El equipo de medición está identificado y dentro de plazo de calibración?',
+ '¿El equipo es adecuado para la tolerancia y característica a medir?',
+ '¿Existe certificado o registro de verificación disponible?',
+ '¿El estado de calibración está visible o controlado en sistema?',
+ '¿Se evalúa el impacto cuando un equipo queda fuera de calibración?',
+ '¿Los patrones usados son trazables a referencias reconocidas?',
+ '¿El uso, almacenamiento y conservación evita deterioro del equipo?',
+ '¿La frecuencia de calibración está justificada por uso, criticidad e histórico?'
+]
+};
+function $(id){return document.getElementById(id)}
+function toast(msg,type='ok'){const t=$('toast');t.textContent=msg;t.className='toast show '+(type==='error'?'error':'ok');setTimeout(()=>t.className='toast',3200)}
+function esc(v){return String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function today(){return new Date().toISOString().slice(0,10)}
+function ymdYear(d){return d&&/^\d{4}-\d{2}-\d{2}$/.test(d)?d.slice(0,4):''}
+function ymdMonth(d){return d&&/^\d{4}-\d{2}-\d{2}$/.test(d)?d.slice(5,7):''}
+function monthName(m){return m?MONTHS[Number(m)-1]||'':''}
+function statusBadge(s){s=s||'Planificada'; if(s==='Cerrada'||s==='Realizada')return `<span class="badge ok-b">${esc(s)}</span>`; if(s==='Vencida')return `<span class="badge bad-b">${esc(s)}</span>`; if(s==='En curso')return `<span class="badge warn-b">${esc(s)}</span>`; return `<span class="badge info-b">${esc(s)}</span>`}
+function dueBadge(a){const d=a.fecha_compromiso||a.fecha_planificada;if((a.estado==='Cerrada'||a.estado==='Realizada'||a.estado==='Anulada'))return '<span class="badge ok-b">Cerrada</span>'; if(d && d<today())return '<span class="badge bad-b">Vencida</span>'; if(d){const diff=(new Date(d)-new Date(today()))/86400000;if(diff<=15)return '<span class="badge warn-b">Próxima</span>';} return '<span class="badge ok-b">En plazo</span>'}
+async function loadData(){await Promise.all([loadAudits(),loadIncidencias()]); populateFilters(); renderAll();}
+async function loadAudits(){
+ try{const {data,error}=await supabaseClient.from('auditorias_internas').select('*').order('fecha_planificada',{ascending:true}); if(error)throw error; audits=(data||[]).map(normalizeAudit); localStorage.setItem('auditorias_internas_backup',JSON.stringify(audits)); toast('Auditorías cargadas desde Supabase');}
+ catch(e){console.error(e); audits=JSON.parse(localStorage.getItem('auditorias_internas_backup')||'[]').map(normalizeAudit); toast('No se pudo leer Supabase. Cargado backup local','error');}
+}
+async function loadIncidencias(){
+ try{const {data,error}=await supabaseClient.from('incidencias').select('*').order('fecha_reclamacion',{ascending:false}).limit(2000); if(error)throw error; incidencias=(data||[]).map(r=>({id:r.id,origen:r.origen,cliente:r.cliente,referencia:r.referencia,descripcion:r.descripcion,fecha:r.fecha_reclamacion||r.fechaReclamacion,severidad:r.severidad,situacion:r.situacion,defectologia:r.defectologia,cantidad:r.cantidad,requiere8d:r.requiere_8d||r.requiere8d,enPlazo:r.en_plazo||r.enPlazo})); localStorage.setItem('incidencias_auditorias_cache',JSON.stringify(incidencias));}
+ catch(e){console.error(e); incidencias=JSON.parse(localStorage.getItem('incidencias_auditorias_cache')||'[]');}
+}
+function normalizeAudit(a){return {...a,cuestionario:parseMaybeJson(a.cuestionario),nc_abiertas:Number(a.nc_abiertas||0)}}
+function parseMaybeJson(v){if(!v)return[]; if(Array.isArray(v))return v; try{return JSON.parse(v)}catch{return[]}}
+function populateFilters(){
+ const years=[...new Set([...audits.map(a=>ymdYear(a.fecha_planificada)),...incidencias.map(i=>ymdYear(i.fecha))].filter(Boolean))].sort();
+ $('yearFilter').innerHTML='<option value="">Todos</option>'+years.map(y=>`<option>${y}</option>`).join('');
+ const thisYear=String(new Date().getFullYear()); if(years.includes(thisYear)) $('yearFilter').value=thisYear;
+}
+function filteredAudits(){const y=$('yearFilter').value,m=$('monthFilter').value,t=$('typeFilter').value,n=$('normFilter').value,q=$('search').value.toLowerCase().trim();return audits.filter(a=>(!y||ymdYear(a.fecha_planificada)===y)&&(!m||ymdMonth(a.fecha_planificada)===m)&&(!t||a.tipo_auditoria===t)&&(!n||a.norma===n)&&(!q||JSON.stringify(a).toLowerCase().includes(q)));}
+function renderAll(){renderKpis();renderPlan();renderAuditsTable();renderRisks();}
+['yearFilter','monthFilter','typeFilter','normFilter','search'].forEach(id=>setTimeout(()=>$(id).addEventListener('input',renderAll),0));
+function renderKpis(){const arr=filteredAudits();$('kpiTotal').textContent=arr.length;$('kpiPlan').textContent=arr.filter(a=>a.estado==='Planificada').length;$('kpiCurso').textContent=arr.filter(a=>a.estado==='En curso').length;$('kpiVencidas').textContent=arr.filter(a=>dueBadge(a).includes('Vencida')).length;$('kpiNcAbiertas').textContent=arr.reduce((s,a)=>s+Number(a.nc_abiertas||0),0);$('kpiCerradas').textContent=arr.filter(a=>a.estado==='Cerrada'||a.estado==='Realizada').length;}
+function renderPlan(){const arr=filteredAudits();let html='<div class="table-wrap"><table><thead><tr><th>Mes</th><th>Planificadas</th><th>Producto</th><th>Proceso</th><th>Pintura</th><th>Almacén</th><th>Sistema</th><th>Calibración</th><th>Vencidas</th><th>NC abiertas</th><th>Detalle</th></tr></thead><tbody>';for(let i=1;i<=12;i++){const mm=String(i).padStart(2,'0');const rows=arr.filter(a=>ymdMonth(a.fecha_planificada)===mm);const countType=t=>rows.filter(a=>a.tipo_auditoria===t).length;html+=`<tr><td><b>${MONTHS[i-1]}</b></td><td>${rows.length}</td><td>${countType('Producto')}</td><td>${countType('Proceso')}</td><td>${countType('Pintura')}</td><td>${countType('Almacén')}</td><td>${countType('Sistema')}</td><td>${countType('Calibración')}</td><td>${rows.filter(a=>dueBadge(a).includes('Vencida')).length}</td><td>${rows.reduce((s,a)=>s+Number(a.nc_abiertas||0),0)}</td><td>${rows.slice(0,5).map(a=>esc(a.numero||a.tipo_auditoria)).join('<br>')}</td></tr>`}html+='</tbody></table></div>';$('annualPlan').innerHTML=html;}
+function renderAuditsTable(){const arr=filteredAudits();$('auditsBody').innerHTML=arr.map(a=>`<tr><td><div class="small-actions"><button onclick="editAudit('${esc(a.id)}')">Editar</button><button class="danger" onclick="deleteAudit('${esc(a.id)}')">Borrar</button><button class="secondary" onclick="openQuestionnaire('${esc(a.id)}')">Cuest.</button></div></td><td>${esc(a.numero)}</td><td>${esc(a.fecha_planificada)}</td><td>${esc(a.fecha_realizada)}</td><td>${esc(monthName(ymdMonth(a.fecha_planificada)))}</td><td>${esc(a.tipo_auditoria)}</td><td>${esc(a.norma)}</td><td>${esc(a.cliente)}</td><td>${esc(a.referencia)}</td><td>${esc(a.defectologia)}</td><td>${esc(a.motivo)}</td><td>${esc(a.responsable)}</td><td>${esc(a.auditor)}</td><td>${statusBadge(a.estado)}</td><td>${esc(a.resultado)}</td><td>${esc(a.hallazgos)}</td><td>${esc(a.acciones)}</td><td>${esc(a.fecha_compromiso)}</td><td>${dueBadge(a)}</td></tr>`).join('')||'<tr><td colspan="19">No hay auditorías en el ámbito seleccionado.</td></tr>';}
+function renderRisks(){const y=$('yearFilter').value||String(new Date().getFullYear());const base=incidencias.filter(i=>!y||ymdYear(i.fecha)===y);const groups=[['cliente','Cliente'],['referencia','Referencia'],['defectologia','Defectología']];let html='';groups.forEach(([key,label])=>{const m={};base.forEach(i=>{const k=i[key]||'Sin clasificar';m[k]=(m[k]||0)+1});const top=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,5);html+=`<div class="suggestion"><h3>Top ${label}</h3>${top.map(([k,v])=>`<p><b>${esc(k)}</b>: ${v} NC <button class="secondary" onclick="createAuditFromRisk('${label}','${esc(k)}',${v})">Crear auditoría</button></p>`).join('')||'<p class="note">Sin datos.</p>'}</div>`});const severe=base.filter(i=>['Alta','Crítica','Critica'].includes(i.severidad));html+=`<div class="suggestion"><h3>Severidad alta/crítica</h3><p><b>${severe.length}</b> registros en ${esc(y)}</p><button onclick="createAuditFromRisk('Severidad','Alta/Crítica',${severe.length})">Crear auditoría de riesgo</button></div>`;$('riskSuggestions').innerHTML=html;}
+function createAuditFromRisk(tipo,valor,total){clearAuditForm();$('aud_numero').value=nextAuditNumber();$('aud_fecha_planificada').value=suggestNextMonthDate();$('aud_tipo').value=tipo==='Defectología'?'Proceso':(tipo==='Cliente'?'Producto':'Sistema');$('aud_norma').value='ISO 9001';$('aud_cliente').value=tipo==='Cliente'?valor:'';$('aud_referencia').value=tipo==='Referencia'?valor:'';$('aud_defectologia').value=tipo==='Defectología'?valor:'';$('aud_motivo').value=`Auditoría generada por análisis de NC. Criterio: ${tipo} ${valor}. Registros detectados en el ámbito: ${total}.`;$('aud_estado').value='Planificada';showPanel('alta');toast('Auditoría sugerida cargada en alta');}
+function suggestNextMonthDate(){const d=new Date();d.setMonth(d.getMonth()+1);d.setDate(15);return d.toISOString().slice(0,10)}
+function nextAuditNumber(){const y=String(new Date().getFullYear());const nums=audits.map(a=>String(a.numero||'')).filter(n=>n.includes(y)).length+1;return `AUD-${y}-${String(nums).padStart(3,'0')}`}
+async function generatePlanFromNCs(){const y=$('yearFilter').value||String(new Date().getFullYear());const base=incidencias.filter(i=>ymdYear(i.fecha)===y);if(!base.length){toast('No hay NC para generar plan','error');return}const proposals=[];const add=(month,tipo,norma,motivo,cliente='',referencia='',defectologia='')=>proposals.push({id:'AUD-'+Date.now()+'-'+Math.random().toString(16).slice(2),numero:`AUD-${y}-${String(audits.length+proposals.length+1).padStart(3,'0')}`,fecha_planificada:`${y}-${month}-15`,estado:'Planificada',tipo_auditoria:tipo,norma,origen_disparo:'NC automática',cliente,referencia,defectologia,motivo,responsable:'Calidad',auditor:'',resultado:'',hallazgos:'',acciones:'',fecha_compromiso:'',nc_abiertas:0,cuestionario:[]});
+const countBy=k=>{const m={};base.forEach(i=>{const v=i[k]||'Sin clasificar';m[v]=(m[v]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1])};
+(countBy('cliente').slice(0,3)).forEach(([k,v],idx)=>add(String(1+idx*2).padStart(2,'0'),'Producto','ISO 9001',`Cliente con concentración de NC: ${k} (${v} registros).`,k));
+(countBy('referencia').slice(0,3)).forEach(([k,v],idx)=>add(String(2+idx*2).padStart(2,'0'),'Proceso','IATF 16949',`Referencia repetitiva: ${k} (${v} registros).`,'',k));
+(countBy('defectologia').slice(0,3)).forEach(([k,v],idx)=>add(String(3+idx*2).padStart(2,'0'),'Proceso','ISO 9001',`Defectología repetitiva: ${k} (${v} registros).`,'','',k));
+add('06','Almacén','ISO 9001','Auditoría semestral de almacenamiento, identificación y segregación de producto no conforme.');
+add('09','Pintura','Cliente','Auditoría específica de pintura/acabado superficial y embalaje.');
+add('11','Sistema','AS/EN 9100','Revisión anual de eficacia de acciones correctivas, riesgos y trazabilidad documental.');
+for(const p of proposals){await upsertAudit(p)}audits=[...audits,...proposals.map(normalizeAudit)];populateFilters();renderAll();toast('Plan anual generado desde NC: '+proposals.length+' auditorías');}
+function collectAudit(){return {id:currentEditId||('AUD-'+Date.now()),numero:$('aud_numero').value||nextAuditNumber(),fecha_planificada:$('aud_fecha_planificada').value||null,fecha_realizada:$('aud_fecha_realizada').value||null,norma:$('aud_norma').value,tipo_auditoria:$('aud_tipo').value,origen_disparo:'Manual',cliente:$('aud_cliente').value,referencia:$('aud_referencia').value,defectologia:$('aud_defectologia').value,motivo:$('aud_motivo').value,responsable:$('aud_responsable').value,auditor:$('aud_auditor').value,resultado:$('aud_resultado').value,hallazgos:$('aud_hallazgos').value,acciones:$('aud_acciones').value,fecha_compromiso:$('aud_fecha_compromiso').value||null,estado:$('aud_estado').value,nc_abiertas:($('aud_hallazgos').value||'').trim()?1:0,cuestionario:JSON.stringify(currentQuestions||[]),updated_at:new Date().toISOString()};}
+async function upsertAudit(a){const payload={...a,cuestionario:typeof a.cuestionario==='string'?a.cuestionario:JSON.stringify(a.cuestionario||[])};const {error}=await supabaseClient.from('auditorias_internas').upsert(payload,{onConflict:'id'});if(error)throw error;}
+async function saveAudit(){try{const a=collectAudit();await upsertAudit(a);const idx=audits.findIndex(x=>x.id===a.id);if(idx>=0)audits[idx]=normalizeAudit(a);else audits.push(normalizeAudit(a));localStorage.setItem('auditorias_internas_backup',JSON.stringify(audits));clearAuditForm();populateFilters();renderAll();toast('Auditoría guardada correctamente en Supabase');}catch(e){console.error(e);toast('Error guardando auditoría en Supabase','error')}}
+function editAudit(id){const a=audits.find(x=>x.id===id);if(!a)return;currentEditId=id;$('editBanner').style.display='block';$('btnSaveAudit').textContent='Guardar cambios';$('aud_numero').value=a.numero||'';$('aud_fecha_planificada').value=a.fecha_planificada||'';$('aud_fecha_realizada').value=a.fecha_realizada||'';$('aud_estado').value=a.estado||'Planificada';$('aud_tipo').value=a.tipo_auditoria||'Producto';$('aud_norma').value=a.norma||'ISO 9001';$('aud_cliente').value=a.cliente||'';$('aud_referencia').value=a.referencia||'';$('aud_defectologia').value=a.defectologia||'';$('aud_responsable').value=a.responsable||'';$('aud_auditor').value=a.auditor||'';$('aud_fecha_compromiso').value=a.fecha_compromiso||'';$('aud_motivo').value=a.motivo||'';$('aud_resultado').value=a.resultado||'';$('aud_hallazgos').value=a.hallazgos||'';$('aud_acciones').value=a.acciones||'';currentQuestions=parseMaybeJson(a.cuestionario);renderQuestionList();showPanel('alta');}
+async function deleteAudit(id){if(!confirm('¿Eliminar auditoría?'))return;try{const {error}=await supabaseClient.from('auditorias_internas').delete().eq('id',id);if(error)throw error;audits=audits.filter(a=>a.id!==id);localStorage.setItem('auditorias_internas_backup',JSON.stringify(audits));renderAll();toast('Auditoría eliminada en Supabase');}catch(e){console.error(e);toast('Error eliminando en Supabase','error')}}
+function clearAuditForm(){currentEditId=null;currentQuestions=[];$('editBanner').style.display='none';$('btnSaveAudit').textContent='Guardar auditoría';['aud_numero','aud_fecha_planificada','aud_fecha_realizada','aud_cliente','aud_referencia','aud_defectologia','aud_responsable','aud_auditor','aud_fecha_compromiso','aud_motivo','aud_resultado','aud_hallazgos','aud_acciones'].forEach(id=>$(id).value='');$('aud_estado').value='Planificada';$('aud_tipo').value='Producto';$('aud_norma').value='ISO 9001';renderQuestionList();}
+function loadTemplateQuestions(){const t=$('aud_tipo').value;currentQuestions=(QUESTION_TEMPLATES[t]||[]).map(q=>({pregunta:q,respuesta:'Pendiente',evidencia:'',comentario:''}));$('questionTemplate').value=t;renderQuestionList();showPanel('cuestionario');toast('Cuestionario cargado: '+t)}
+function renderQuestions(t){currentQuestions=(QUESTION_TEMPLATES[t]||[]).map(q=>({pregunta:q,respuesta:'Pendiente',evidencia:'',comentario:''}));renderQuestionList();}
+function renderQuestionList(){const c=$('questionsContainer');if(!currentQuestions.length){c.innerHTML='<p class="note">No hay cuestionario cargado.</p>';return}c.innerHTML=currentQuestions.map((q,i)=>`<div class="question-card"><div class="question-head"><div class="question-text">${i+1}. ${esc(q.pregunta)}</div><div><label>Resultado</label><select onchange="currentQuestions[${i}].respuesta=this.value"><option ${q.respuesta==='Pendiente'?'selected':''}>Pendiente</option><option ${q.respuesta==='Conforme'?'selected':''}>Conforme</option><option ${q.respuesta==='No conforme'?'selected':''}>No conforme</option><option ${q.respuesta==='Observación'?'selected':''}>Observación</option><option ${q.respuesta==='No aplica'?'selected':''}>No aplica</option></select></div><div><label>Evidencia</label><input value="${esc(q.evidencia)}" onchange="currentQuestions[${i}].evidencia=this.value" placeholder="Registro, foto, plano, lote..."></div></div><label>Comentario</label><textarea onchange="currentQuestions[${i}].comentario=this.value">${esc(q.comentario)}</textarea></div>`).join('');}
+function openQuestionnaire(id){const a=audits.find(x=>x.id===id);currentQuestions=parseMaybeJson(a?.cuestionario);if(!currentQuestions.length){currentQuestions=(QUESTION_TEMPLATES[a?.tipo_auditoria||'Producto']||[]).map(q=>({pregunta:q,respuesta:'Pendiente',evidencia:'',comentario:''}))}renderQuestionList();showPanel('cuestionario')}
+function showPanel(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(b=>b.classList.add('secondary'));}
+if(!supabaseClient){toast('No carga librería Supabase','error')}else loadData();
+</script>
+</body>
+</html>
