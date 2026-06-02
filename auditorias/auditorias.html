@@ -154,7 +154,6 @@ function normaBase(n){const s=String(n||'').toUpperCase();if(s.includes('IATF'))
 function normRuleForClient(cliente){const c=String(cliente||'').toUpperCase();return CLIENT_NORM_RULES.find(r=>r.patterns.some(p=>c.includes(p)))||{norma:'ISO 9001',criterio:'Sin regla específica de cliente: se aplica ISO 9001 como base y se revisan requisitos internos/cliente disponibles.'}}
 function buildQuestions(tipo,norma){const base=[...(QUESTION_TEMPLATES[tipo]||[])];const nb=normaBase(norma);const extra=[...(NORM_QUESTIONS[nb]||[])];if(nb==='Cliente' && normaBase(normRuleForClient('').norma)!=='Cliente'){}return [...base,...extra]}
 function renderRules(){const el=$('rulesBody');if(!el)return;el.innerHTML=CLIENT_NORM_RULES.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.patterns.join(', '))}</td><td><b>${esc(r.norma)}</b></td><td>${esc(r.criterio)}</td></tr>`).join('')+`<tr><td>Default</td><td>Resto de clientes</td><td><b>ISO 9001</b></td><td>Base de sistema de gestión, procesos, registros, acciones correctivas y mejora.</td></tr>`}
-};
 async function loadData(){try{await loadAudits();await loadIncidencias();populateFilters();renderAll();toast('Datos cargados desde Supabase')}catch(e){console.error(e);toast('Error cargando datos. Reviso backup local','error');audits=JSON.parse(localStorage.getItem('auditorias_internas_backup')||'[]').map(normalizeAudit);incidencias=JSON.parse(localStorage.getItem('incidencias_auditorias_cache')||'[]');populateFilters();renderAll()}}
 async function loadAudits(){const {data,error}=await supabaseClient.from('auditorias_internas').select('*').order('fecha_planificada',{ascending:false});if(error)throw error;audits=(data||[]).map(normalizeAudit);localStorage.setItem('auditorias_internas_backup',JSON.stringify(audits))}
 async function loadIncidencias(){const {data,error}=await supabaseClient.from('incidencias').select('*').order('fecha_reclamacion',{ascending:false}).limit(5000);if(error)throw error;incidencias=(data||[]).map(cleanInc);localStorage.setItem('incidencias_auditorias_cache',JSON.stringify(incidencias))}
@@ -198,3 +197,4 @@ if(!supabaseClient){toast('No carga librería Supabase','error')}else loadData()
 </script>
 </body>
 </html>
+
