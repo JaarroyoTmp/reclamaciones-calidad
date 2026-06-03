@@ -162,14 +162,21 @@ const DEFAULT_DEFECTOLOGIAS={
  'Mecanizado dimensional':{proceso:'Mecanizado / control dimensional',tipo:'Proceso'},
  'Fundición / porosidad':{proceso:'Fundición / recepción / control visual',tipo:'Proceso'},
  'Pintura / acabado superficial':{proceso:'Pintura / acabado',tipo:'Pintura'},
+ 'Montaje de herramienta':{proceso:'Preparación máquina / montaje herramienta',tipo:'Proceso'},
+ 'Desgaste de herramienta':{proceso:'Mecanizado / vida de herramienta',tipo:'Proceso'},
+ 'Rotura de herramienta':{proceso:'Mecanizado / rotura herramienta',tipo:'Proceso'},
+ 'Error programa CNC':{proceso:'Programación CNC / preparación máquina',tipo:'Proceso'},
+ 'Error de amarre / utillaje':{proceso:'Amarre / utillaje / preparación',tipo:'Proceso'},
+ 'Error de reglaje':{proceso:'Reglaje / puesta a punto',tipo:'Proceso'},
+ 'Control dimensional':{proceso:'Control dimensional / metrología',tipo:'Calibración'},
  'Montaje / componentes':{proceso:'Montaje',tipo:'Producto'},
  'Identificación / documentación':{proceso:'Almacén / trazabilidad',tipo:'Almacén'},
+ 'Trazabilidad':{proceso:'Trazabilidad / documentación / lote',tipo:'Trazabilidad'},
  'Limpieza / virutas':{proceso:'Limpieza técnica',tipo:'Proceso'},
  'Tratamiento superficial':{proceso:'Tratamiento superficial',tipo:'Proceso'},
  'Material':{proceso:'Recepción / proveedor',tipo:'Proceso'},
  'Logística / embalaje':{proceso:'Almacén / expedición',tipo:'Almacén'},
  'Otros':{proceso:'Sistema calidad',tipo:'Sistema'}
- 'Montaje de herramienta':{proceso:'Preparación máquina / montaje herramienta',tipo:'Proceso'},
 };
 function toast(msg,type='ok'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+(type==='error'?'error':'ok');setTimeout(()=>el.className='toast',3200)}
 function showPanel(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
@@ -223,16 +230,27 @@ function mapDefectologia(r){
 }
 function autoDefectologia(r){
  const t=upper([r.descripcion,r.causa,r.no_conformidad,r.acciones].join(' '));
- if(/ROSCA|M12|M10|M120|NPSF|TALADRO|BROCA/.test(t))return 'Rosca / taladro';
- if(/PORO|POROSIDAD|FUGA|ESTANQUEIDAD|FUNDICI/.test(t))return 'Fundición / porosidad';
- if(/PINT|IMPRIM|CAPA|RUGOS/.test(t))return 'Pintura / acabado superficial';
- if(/MONTAJE|COMPONENTE|CASQUILLO|BOTELLA/.test(t))return 'Montaje / componentes';
- if(/VIRUTA|LIMPIEZA|CONDUCTO/.test(t))return 'Limpieza / virutas';
- if(/IDENT|MARCAJE|ETIQUET|DOCUMENT/.test(t))return 'Identificación / documentación';
- if(/DUREZA|MATERIAL|TRATAMIENTO|FORJA/.test(t))return 'Material';
- if(/COTA|DIAM|Ø|PLANITUD|CONCENTRIC|ALTURA|ESPESOR|POSICI/.test(t))return 'Mecanizado dimensional';
+
+ // Herramienta / preparación máquina: debe ir antes de montaje general
+ if(/MONTAJE\s*DE\s*HERRAMIENTA|HERRAMIENTA\s*MAL\s*MONTADA|HERRAMIENTA\s*EQUIVOCADA|PLAQUITA\s*INVERTIDA|PLAQUITA|PORTAHERRAMIENTA|PORTA\s*HERRAMIENTA|REGLAJE|PUESTA\s*A\s*PUNTO|PRESET|PREAJUSTE|OFFSET|CORRECTOR|UTILLAJE/.test(t))return 'Montaje de herramienta';
+ if(/DESGASTE\s*DE\s*HERRAMIENTA|HERRAMIENTA\s*DESGASTADA|DESGASTE|VIDA\s*DE\s*HERRAMIENTA/.test(t))return 'Desgaste de herramienta';
+ if(/ROTURA\s*DE\s*HERRAMIENTA|HERRAMIENTA\s*ROTA|ROTA\s*HERRAMIENTA|ROMPE\s*MACHO|MACHO\s*ROTO|BROCA\s*ROTA/.test(t))return 'Rotura de herramienta';
+ if(/PROGRAMA\s*CNC|ERROR\s*PROGRAMA|CNC|ISO\s*ERRONEO|CAM|POSTPROCESADOR|CICLO\s*MAL/.test(t))return 'Error programa CNC';
+ if(/AMARRE|BRIDA|MORDAZA|PLATO|GARRA|CENTRADO|SUJECI|UTILLAJE|FIJACION|FIJACIÓN/.test(t))return 'Error de amarre / utillaje';
+
+ if(/ROSCA|M12|M10|M120|NPSF|TALADRO|BROCA|MACHO|ROSCADO|AVELLAN/.test(t))return 'Rosca / taladro';
+ if(/PORO|POROSIDAD|FUGA|ESTANQUEIDAD|FUNDICI|RECHUPE|INCLUSION|INCLUSI/.test(t))return 'Fundición / porosidad';
+ if(/PINT|IMPRIM|CAPA|RUGOS|ACABADO\s*SUPERFICIAL|RECUBRIMIENTO/.test(t))return 'Pintura / acabado superficial';
+ if(/MONTAJE|COMPONENTE|CASQUILLO|BOTELLA|ENSAMBLE|ENSAMBLAJE/.test(t))return 'Montaje / componentes';
+ if(/VIRUTA|LIMPIEZA|CONDUCTO|SUCIEDAD|CONTAMINACI/.test(t))return 'Limpieza / virutas';
+ if(/IDENT|MARCAJE|ETIQUET|DOCUMENT|ALBARAN|CERTIFICADO|TRAZABILIDAD|LOTE/.test(t))return 'Identificación / documentación';
+ if(/DUREZA|MATERIAL|TRATAMIENTO|FORJA|ALEACION|ALEACIÓN/.test(t))return 'Material';
+ if(/CALIBR|MICROMETRO|MICRÓMETRO|ALEXOMETRO|ALEXÓMETRO|PIE\s*DE\s*REY|EQUIPO\s*MEDICI/.test(t))return 'Control dimensional';
+ if(/COTA|DIAM|Ø|PLANITUD|CONCENTRIC|ALTURA|ESPESOR|POSICI|OVAL|EXCENTRIC/.test(t))return 'Mecanizado dimensional';
+
  return 'Otros';
 }
+
 function calcRiskGroups(){
  const rls=getRules(), data=filterIncidencias(); const map={}; const byDef={};
  data.forEach(r=>{const key=[upper(r.cliente)||'SIN CLIENTE',upper(r.referencia)||'SIN REFERENCIA',mapDefectologia(r).defectologia].join('|'); if(!map[key])map[key]={cliente:r.cliente||'Sin cliente',referencia:r.referencia||'Sin referencia',defectologia:mapDefectologia(r).defectologia,tipo:mapDefectologia(r).tipo,proceso:mapDefectologia(r).proceso,items:[],score:0}; map[key].items.push(r); byDef[mapDefectologia(r).defectologia]=(byDef[mapDefectologia(r).defectologia]||0)+1});
@@ -310,6 +328,12 @@ function renderCharts(){
 }
 function sumBy(arr,key,valKey){const out={};arr.forEach(x=>{const k=x[key]||'Sin dato';out[k]=(out[k]||0)+num(x[valKey]||1)});return out}
 function drawBar(id,data){const el=document.getElementById(id);const entries=Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,8);const max=Math.max(1,...entries.map(e=>e[1]));el.innerHTML=entries.map(([k,v])=>`<div class="bar-row"><span>${esc(k)}</span><div class="track"><div class="fill ${v/max>.7?'bad-fill':v/max>.4?'warn-fill':''}" style="width:${Math.max(4,(v/max)*100)}%"></div></div><b>${Math.round(v)}</b></div>`).join('')||'<p class="note">Sin datos.</p>'}
+function barHtml(data){
+ const entries=Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,8);
+ const max=Math.max(1,...entries.map(e=>e[1]));
+ return entries.map(([k,v])=>`<div class="bar-row"><span>${esc(k)}</span><div class="track"><div class="fill ${v/max>.7?'bad-fill':v/max>.4?'warn-fill':''}" style="width:${Math.max(4,(v/max)*100)}%"></div></div><b>${Math.round(v)}</b></div>`).join('')||'<p class="note">Sin datos.</p>';
+}
+
 function renderClientesNorma(){document.getElementById('clientesNormaBody').innerHTML=clientesNorma.map(x=>`<tr><td>${esc(x.cliente)}</td><td>${esc(x.norma)}</td><td>${esc(x.frecuencia_auditoria_meses||12)} meses</td><td>${esc(x.criticidad||'MEDIA')}</td><td>${esc(x.observaciones||'')}</td></tr>`).join('')||'<tr><td colspan="5">Sin reglas cliente/norma.</td></tr>'}
 async function saveClienteNorma(){
  const row={cliente:document.getElementById('ruleCliente').value.trim(),norma:document.getElementById('ruleNorma').value,frecuencia_auditoria_meses:num(document.getElementById('ruleFreq').value)||12,criticidad:document.getElementById('ruleCrit').value,observaciones:document.getElementById('ruleObs').value.trim()};
@@ -391,4 +415,3 @@ window.addEventListener('DOMContentLoaded',()=>{setupFilters(); renderQuestionna
 </script>
 </body>
 </html>
-
