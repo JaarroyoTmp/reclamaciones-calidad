@@ -169,6 +169,7 @@ const DEFAULT_DEFECTOLOGIAS={
  'Material':{proceso:'Recepción / proveedor',tipo:'Proceso'},
  'Logística / embalaje':{proceso:'Almacén / expedición',tipo:'Almacén'},
  'Otros':{proceso:'Sistema calidad',tipo:'Sistema'}
+ 'Montaje de herramienta':{proceso:'Preparación máquina / montaje herramienta',tipo:'Proceso'},
 };
 function toast(msg,type='ok'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+(type==='error'?'error':'ok');setTimeout(()=>el.className='toast',3200)}
 function showPanel(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
