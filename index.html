@@ -35,10 +35,42 @@
 @media print{header,.toolbar,.tabs,#toast,.meeting-controls button:not(.print-keep){display:none!important}main{max-width:none!important;padding:0!important}.card{box-shadow:none!important}#reunion{display:block!important}.meeting-card,.meeting-kpi{box-shadow:none!important;break-inside:avoid}}
 @media(max-width:900px){.meeting-hero,.meeting-grid,.meeting-two{grid-template-columns:1fr}}
 
+
+.meeting-board{background:linear-gradient(180deg,#ffffff,#f6f9fd);border:1px solid #dbe7f5;border-radius:18px;padding:18px;margin-top:16px}
+.meeting-section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 14px;padding:12px 14px;border-radius:14px;background:#102a4c;color:#fff}
+.meeting-section-title.external{background:linear-gradient(135deg,#8a1c1c,#e25822)}
+.meeting-section-title.internal{background:linear-gradient(135deg,#154e7d,#1296b7)}
+.meeting-section-title h3{margin:0;color:#fff;font-size:22px;border:0;padding:0}
+.meeting-section-title span{background:rgba(255,255,255,.16);padding:6px 10px;border-radius:999px;font-weight:800}
+.claim-card{background:white;border:1px solid #dbe7f5;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 14px 35px rgba(15,45,82,.08);border-left:8px solid #2f5597}
+.claim-card.external{border-left-color:#e25822}
+.claim-card.internal{border-left-color:#1296b7}
+.claim-top{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start}
+.claim-code{font-size:18px;font-weight:900;color:#0f2d52}
+.claim-ref{font-size:30px;line-height:1.05;font-weight:950;color:#0f2d52;margin:6px 0}
+.claim-client{font-size:17px;font-weight:800;color:#334155}
+.claim-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.claim-tag{display:inline-block;padding:7px 10px;border-radius:999px;background:#eaf1fb;color:#0f2d52;font-size:12px;font-weight:900}
+.claim-tag.danger{background:#ffe4e6;color:#9f1239}
+.claim-tag.warn{background:#ffedd5;color:#9a3412}
+.claim-tag.ok{background:#dcfce7;color:#166534}
+.claim-detail{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:14px}
+.claim-box{background:#f8fbff;border:1px solid #e5edf6;border-radius:14px;padding:14px}
+.claim-box h4{margin:0 0 8px;color:#0f2d52;font-size:14px;text-transform:uppercase;letter-spacing:.04em}
+.claim-box p{margin:0;font-size:15px;line-height:1.45;color:#1f2937}
+.claim-meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.claim-meta{background:#fbfdff;border:1px solid #e5edf6;border-radius:12px;padding:10px}
+.claim-meta small{display:block;color:#64748b;font-weight:800;text-transform:uppercase;font-size:10px}
+.claim-meta b{display:block;color:#0f2d52;font-size:14px;margin-top:4px}
+.meeting-summary-text{font-size:16px;line-height:1.55;color:#1e293b}
+.meeting-empty{padding:18px;border:1px dashed #cbd5e1;border-radius:14px;background:#f8fafc;color:#64748b}
+@media print{.claim-card{break-inside:avoid}.claim-ref{font-size:24px}.meeting-section-title{break-after:avoid}}
+@media(max-width:900px){.claim-top,.claim-detail,.claim-meta-grid{grid-template-columns:1fr}.claim-tags{justify-content:flex-start}.claim-ref{font-size:24px}}
+
 </style>
 </head>
 <body>
-<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V13: resumen semanal y pantalla de reunión. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
+<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V14: presentación semanal detallada por externas e internas. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
 <main>
 <section class="card toolbar">
   <div><label>Buscar</label><input id="search" placeholder="Buscar cliente, referencia, defecto, responsable..."></div>
@@ -100,11 +132,12 @@
 <br><h3>Informe anual detallado para auditoría</h3><p class="note">Genera un informe técnico del ámbito seleccionado o del año elegido. Incluye lectura por cliente, referencia, defectología, piezas afectadas, PPM estimado y recomendaciones.</p><div class="form-grid"><div><label>Año informe</label><select id="reportYear"><option value="">Usar filtros actuales</option></select></div><div><label>Mes informe</label><select id="reportMonth"><option value="">Todos / filtro actual</option><option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option><option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option><option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select></div><div><label>Cliente informe</label><select id="reportClient"><option value="">Todos / filtro actual</option></select></div><div><label>Origen informe</label><select id="reportOrigin"><option value="">Todos / filtro actual</option><option>RECLAMACION CLIENTE</option><option>INTERNA</option></select></div><div style="align-self:end"><button onclick="renderAnnualReport()">Generar informe</button></div></div><div id="annualReport" class="report-box"><span class="note">Selecciona filtros y pulsa Generar informe.</span></div><details><summary>Ver comparativa histórica por años</summary><p class="note">Esta comparativa no sustituye al indicador anual; sirve para detectar tendencia y años especialmente críticos.</p><div class="charts"><div class="chart-card"><label>Total por año</label><div id="chartAnnualTotal" class="bar"></div></div><div class="chart-card"><label>Cliente vs internas por año</label><div id="chartAnnualOrigin" class="bar"></div></div><div class="chart-card"><label>Alta/crítica por año</label><div id="chartAnnualSeverity" class="bar"></div></div></div></details>
 </section>
 
+
 <section id="reunion" class="card panel">
   <div class="meeting-header">
     <div class="meeting-title">
-      <h2>Resumen semanal de NC / reclamaciones</h2>
-      <p>Pantalla preparada para reunión semanal: altas de la semana, riesgos, abiertas, vencidas y prioridades de seguimiento.</p>
+      <h2>Presentación semanal de reclamaciones / NC</h2>
+      <p>Vista de reunión: separa externas e internas y muestra cada caso con referencia, problema, motivo y situación.</p>
     </div>
     <div class="meeting-controls">
       <div><label>Semana desde</label><input id="weekStart" type="date" onchange="renderWeeklyMeeting()"></div>
@@ -113,27 +146,44 @@
       <button class="secondary" onclick="window.print()">Imprimir / PDF reunión</button>
     </div>
   </div>
+
   <div id="meetingRange" class="meeting-alert"></div>
+
   <div class="meeting-hero">
-    <div class="meeting-kpi"><small>Altas semana</small><strong id="wkTotal">0</strong><span>NC/reclamaciones registradas</span></div>
-    <div class="meeting-kpi"><small>Cliente</small><strong id="wkCliente">0</strong><span>Impacto externo</span></div>
+    <div class="meeting-kpi"><small>Total semana</small><strong id="wkTotal">0</strong><span>Altas registradas</span></div>
+    <div class="meeting-kpi"><small>Externas cliente</small><strong id="wkCliente">0</strong><span>Voz del cliente</span></div>
+    <div class="meeting-kpi"><small>Internas</small><strong id="wkInternas">0</strong><span>Detección interna</span></div>
     <div class="meeting-kpi"><small>Alta/crítica</small><strong id="wkAlta">0</strong><span>Riesgo prioritario</span></div>
-    <div class="meeting-kpi"><small>Vencidas abiertas</small><strong id="wkVencidas">0</strong><span>Acción inmediata</span></div>
   </div>
-  <div class="meeting-grid">
-    <div class="meeting-card"><h3>1. Altas de la semana</h3><div id="weeklyNewList" class="meeting-list"></div></div>
-    <div class="meeting-card"><h3>2. Mensaje ejecutivo</h3><div id="weeklyExecutive"></div></div>
+
+  <div class="meeting-card">
+    <h3>Resumen ejecutivo para reunión</h3>
+    <div id="weeklyExecutive" class="meeting-summary-text"></div>
   </div>
+
+  <div class="meeting-board">
+    <div class="meeting-section-title external">
+      <h3>Reclamaciones externas / cliente</h3>
+      <span id="externalCount">0 casos</span>
+    </div>
+    <div id="weeklyExternalList"></div>
+
+    <div class="meeting-section-title internal">
+      <h3>No conformidades internas</h3>
+      <span id="internalCount">0 casos</span>
+    </div>
+    <div id="weeklyInternalList"></div>
+  </div>
+
   <div class="meeting-two">
-    <div class="meeting-card"><h3>3. Prioridades abiertas / vencidas</h3><div id="weeklyPriorityList" class="meeting-list"></div></div>
-    <div class="meeting-card"><h3>4. Top cliente / referencia / defectología</h3><div id="weeklyTops"></div></div>
-  </div>
-  <div class="meeting-card" style="margin-top:16px">
-    <h3>5. Tabla para acta de reunión</h3>
-    <div class="table-wrap"><table class="meeting-table">
-      <thead><tr><th>Código</th><th>Alta</th><th>Cliente</th><th>Referencia</th><th>Defectología</th><th>Severidad</th><th>Estado</th><th>Acción esperada</th></tr></thead>
-      <tbody id="weeklyMeetingTable"></tbody>
-    </table></div>
+    <div class="meeting-card">
+      <h3>Prioridades abiertas / vencidas</h3>
+      <div id="weeklyPriorityList" class="meeting-list"></div>
+    </div>
+    <div class="meeting-card">
+      <h3>Top semanal</h3>
+      <div id="weeklyTops"></div>
+    </div>
   </div>
 </section>
 
@@ -141,7 +191,7 @@
 </main><div id="toast" class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260608_v13_resumen_semanal_reunion';
+const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260608_v14_presentacion_reclamaciones';
 const SUPABASE_URL='https://lsfalvcfbssqxbhlsdjx.supabase.co';
 const SUPABASE_KEY='sb_publishable_FWi5H3uAP_yWvdqCNm6xyw_GdJqDAb8';
 const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -329,22 +379,90 @@ function isLateOpen(r){const prev=dateOnly(r.fechaPrevista);if(!prev||isClosed(r
 function weeklyRows(){const {s,e}=weeklyDateRange();return records.filter(r=>r.situacion!=='Anulada').filter(r=>{const alta=dateOnly(r.createdAt||guessCreatedAt(r));return alta&&alta>=s&&alta<=e}).sort(sortByAltaSistema)}
 function weeklyOpenRiskRows(){return records.filter(r=>r.situacion!=='Anulada'&&!isClosed(r)).filter(r=>isLateOpen(r)||['Alta','Crítica'].includes(r.severidad)||String(r.requiere8d||'').toUpperCase()==='SI').sort((a,b)=>{const pa=(isLateOpen(a)?100:0)+(String(a.severidad).includes('Crítica')?80:String(a.severidad).includes('Alta')?50:0)+(String(a.requiere8d).toUpperCase()==='SI'?30:0);const pb=(isLateOpen(b)?100:0)+(String(b.severidad).includes('Crítica')?80:String(b.severidad).includes('Alta')?50:0)+(String(b.requiere8d).toUpperCase()==='SI'?30:0);return pb-pa||sortByAltaSistema(a,b)}).slice(0,10)}
 function actionExpected(r){if(isLateOpen(r))return 'Revisar cierre: fuera de plazo';if(String(r.requiere8d||'').toUpperCase()==='SI')return 'Seguimiento 8D y eficacia';if(['Alta','Crítica'].includes(r.severidad))return 'Priorizar contención / causa raíz';if(!r.noConformidad&&!r.causa)return 'Completar análisis';return 'Seguimiento normal'}
+
+function problemText(r){
+ return r.descripcion||r.noConformidad||r.contencion||'Sin descripción registrada';
+}
+function reasonText(r){
+ return r.causa||r.deteccion||r.acciones||'Pendiente de análisis / causa raíz';
+}
+function claimCard(r,kind){
+ const sev=String(r.severidad||'').toUpperCase();
+ const sevCls=sev.includes('CRIT')||sev.includes('ALTA')?'danger':sev.includes('MEDIA')?'warn':'ok';
+ return `<article class="claim-card ${kind}">
+   <div class="claim-top">
+    <div>
+      <div class="claim-code">${esc(r.numero)} · ${esc(r.origen)}</div>
+      <div class="claim-ref">${esc(r.referencia||'Sin referencia')}</div>
+      <div class="claim-client">${esc(r.cliente||'Sin cliente')}</div>
+    </div>
+    <div class="claim-tags">
+      <span class="claim-tag ${sevCls}">${esc(r.severidad||'Sin severidad')}</span>
+      <span class="claim-tag">${esc(defectologyOf(r))}</span>
+      <span class="claim-tag">${esc(r.situacion||'Sin estado')}</span>
+      ${String(r.requiere8d||'').toUpperCase()==='SI'?'<span class="claim-tag danger">8D</span>':''}
+    </div>
+   </div>
+   <div class="claim-detail">
+    <div class="claim-box">
+      <h4>Qué ha pasado</h4>
+      <p>${esc(problemText(r))}</p>
+    </div>
+    <div class="claim-box">
+      <h4>Por qué / análisis actual</h4>
+      <p>${esc(reasonText(r))}</p>
+    </div>
+   </div>
+   <div class="claim-meta-grid">
+    <div class="claim-meta"><small>Alta sistema</small><b>${esc(formatDateTimeAlta(r.createdAt||guessCreatedAt(r)))}</b></div>
+    <div class="claim-meta"><small>Fecha registro</small><b>${esc(r.fechaReclamacion||'Sin fecha')}</b></div>
+    <div class="claim-meta"><small>Fecha prevista</small><b>${esc(r.fechaPrevista||'Sin fecha')}</b></div>
+    <div class="claim-meta"><small>Piezas afectadas</small><b>${esc(r.cantidad||'Sin dato')}</b></div>
+    <div class="claim-meta"><small>OF</small><b>${esc(r.of||r.piezasFabricadasTotal||'Sin dato')}</b></div>
+    <div class="claim-meta"><small>Acción esperada</small><b>${esc(actionExpected(r))}</b></div>
+   </div>
+  </article>`;
+}
 function renderWeeklyMeeting(){
  if(!document.getElementById('reunion'))return;
- const {s,e}=weeklyDateRange(), rows=weeklyRows(), risk=weeklyOpenRiskRows();
- const clienteRows=rows.filter(r=>String(r.origen||'').toUpperCase().includes('CLIENTE'));
+ const {s,e}=weeklyDateRange(), rows=weeklyRows();
+ const external=rows.filter(r=>String(r.origen||'').toUpperCase().includes('CLIENTE')||String(r.origen||'').toUpperCase().includes('EXTER'));
+ const internal=rows.filter(r=>!external.includes(r));
  const altaRows=rows.filter(r=>['Alta','Crítica'].includes(r.severidad));
  const lateAll=records.filter(r=>r.situacion!=='Anulada'&&isLateOpen(r));
- document.getElementById('meetingRange').innerHTML=`<b>Periodo de reunión:</b> ${esc(s)} a ${esc(e)}. Ordenado por fecha de alta en el sistema.`;
- document.getElementById('wkTotal').textContent=rows.length;document.getElementById('wkCliente').textContent=clienteRows.length;document.getElementById('wkAlta').textContent=altaRows.length;document.getElementById('wkVencidas').textContent=lateAll.length;
- document.getElementById('weeklyNewList').innerHTML=rows.length?rows.map(r=>`<div class="meeting-item ${meetingSeverityClass(r)}"><b>${esc(r.numero)}</b> · ${esc(r.cliente)} · <b>${esc(r.referencia)}</b><div>${esc(r.descripcion||'Sin descripción')}</div><div class="meta">Alta sistema: ${esc(formatDateTimeAlta(r.createdAt||guessCreatedAt(r)))} · Origen: ${esc(r.origen)} · Severidad: ${esc(r.severidad)} · Defectología: ${esc(defectologyOf(r))}</div></div>`).join(''):'<p class="note">No hay altas registradas en esta semana.</p>';
- const topCli=topEntries(countBy(rows,r=>r.cliente),3), topDef=topEntries(countBy(rows,r=>defectologyOf(r)),3);
- const msg=[];msg.push(`<p><span class="meeting-badge">${rows.length}</span> NC/reclamaciones registradas en la semana.</p>`);if(clienteRows.length)msg.push(`<p><b>${clienteRows.length}</b> tienen origen cliente. Revisar comunicación, contención y plazos.</p>`);if(altaRows.length)msg.push(`<p><b>${altaRows.length}</b> son Alta/Crítica. Deben tratarse como prioridad en reunión.</p>`);if(lateAll.length)msg.push(`<p><b>${lateAll.length}</b> registros abiertos aparecen vencidos a fecha de hoy.</p>`);if(topCli.length)msg.push(`<p><b>Cliente principal:</b> ${esc(topCli[0][0])} (${topCli[0][1]} registros).</p>`);if(topDef.length)msg.push(`<p><b>Defectología dominante:</b> ${esc(topDef[0][0])} (${topDef[0][1]} registros).</p>`);
- document.getElementById('weeklyExecutive').innerHTML=msg.join('')||'<p class="note">Sin datos para construir mensaje ejecutivo.</p>';
+ document.getElementById('meetingRange').innerHTML=`<b>Periodo de reunión:</b> ${esc(s)} a ${esc(e)}. Presentación ordenada por fecha de alta en el sistema.`;
+ document.getElementById('wkTotal').textContent=rows.length;
+ document.getElementById('wkCliente').textContent=external.length;
+ document.getElementById('wkInternas').textContent=internal.length;
+ document.getElementById('wkAlta').textContent=altaRows.length;
+ document.getElementById('externalCount').textContent=external.length+' casos';
+ document.getElementById('internalCount').textContent=internal.length+' casos';
+
+ const topCli=topEntries(countBy(rows,r=>r.cliente),3);
+ const topRef=topEntries(countBy(rows,r=>r.referencia),3);
+ const topDef=topEntries(countBy(rows,r=>defectologyOf(r)),3);
+ const msg=[];
+ msg.push(`<p>En el periodo seleccionado se han registrado <b>${rows.length}</b> reclamaciones / NC: <b>${external.length}</b> externas de cliente y <b>${internal.length}</b> internas.</p>`);
+ if(altaRows.length)msg.push(`<p>Hay <b>${altaRows.length}</b> casos de severidad Alta/Crítica que deben revisarse de forma prioritaria.</p>`);
+ if(lateAll.length)msg.push(`<p>Actualmente existen <b>${lateAll.length}</b> registros abiertos fuera de plazo en el sistema.</p>`);
+ if(topCli.length)msg.push(`<p><b>Cliente más repetido esta semana:</b> ${esc(topCli[0][0])} (${topCli[0][1]} casos).</p>`);
+ if(topRef.length)msg.push(`<p><b>Referencia más repetida:</b> ${esc(topRef[0][0])} (${topRef[0][1]} casos).</p>`);
+ if(topDef.length)msg.push(`<p><b>Defectología dominante:</b> ${esc(topDef[0][0])} (${topDef[0][1]} casos).</p>`);
+ document.getElementById('weeklyExecutive').innerHTML=msg.join('')||'<p class="note">Sin datos para construir resumen ejecutivo.</p>';
+
+ document.getElementById('weeklyExternalList').innerHTML=external.length?external.map(r=>claimCard(r,'external')).join(''):'<div class="meeting-empty">No hay reclamaciones externas de cliente en esta semana.</div>';
+ document.getElementById('weeklyInternalList').innerHTML=internal.length?internal.map(r=>claimCard(r,'internal')).join(''):'<div class="meeting-empty">No hay NC internas en esta semana.</div>';
+
+ const risk=weeklyOpenRiskRows();
  document.getElementById('weeklyPriorityList').innerHTML=risk.length?risk.map(r=>`<div class="meeting-item ${meetingSeverityClass(r)}"><b>${esc(r.numero)}</b> · ${esc(r.cliente)} · ${esc(r.referencia)}<div>${esc(actionExpected(r))}</div><div class="meta">Prevista: ${esc(r.fechaPrevista||'Sin fecha')} · Estado: ${esc(r.situacion)} · Plazo: ${esc(r.enPlazo)} · 8D: ${esc(r.requiere8d)}</div></div>`).join(''):'<p class="note">No hay prioridades abiertas críticas/vencidas.</p>';
- document.getElementById('weeklyTops').innerHTML=`<table class="meeting-table"><tbody><tr><th colspan="2">Clientes</th></tr>${topEntries(countBy(rows,r=>r.cliente),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}<tr><th colspan="2">Referencias</th></tr>${topEntries(countBy(rows,r=>r.referencia),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}<tr><th colspan="2">Defectologías</th></tr>${topEntries(countBy(rows,r=>defectologyOf(r)),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}</tbody></table>`;
- document.getElementById('weeklyMeetingTable').innerHTML=rows.map(r=>`<tr><td><b>${esc(r.numero)}</b></td><td>${esc(formatDateTimeAlta(r.createdAt||guessCreatedAt(r)))}</td><td>${esc(r.cliente)}</td><td>${esc(r.referencia)}</td><td>${esc(defectologyOf(r))}</td><td>${esc(r.severidad)}</td><td>${esc(r.situacion)}</td><td>${esc(actionExpected(r))}</td></tr>`).join('')||'<tr><td colspan="8">Sin registros semanales.</td></tr>';
+
+ document.getElementById('weeklyTops').innerHTML=`<table class="meeting-table"><tbody>
+  <tr><th colspan="2">Clientes</th></tr>${topEntries(countBy(rows,r=>r.cliente),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}
+  <tr><th colspan="2">Referencias</th></tr>${topEntries(countBy(rows,r=>r.referencia),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}
+  <tr><th colspan="2">Defectologías</th></tr>${topEntries(countBy(rows,r=>defectologyOf(r)),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}
+ </tbody></table>`;
 }
+
 function render(){records.forEach(updateDerived); scopeText(); const rows=selectedScope(true); document.getElementById('recordsBody').innerHTML=rows.map(r=>{const actionButtons=`<div class="small-actions"><button class="secondary" onclick="loadEditRecord('${esc(r.id)}')">✏️ Editar</button><button class="warning" onclick="cancelRecord('${esc(r.id)}')">Anular</button><button class="danger" onclick="deleteRecord('${esc(r.id)}')">🗑️ Borrar</button></div>`;return `<tr><td class="action-cell">${actionButtons}</td><td>${esc(formatDateTimeAlta(r.createdAt||guessCreatedAt(r)))}</td><td>${esc(r.origen)}</td><td><b>${esc(r.numero)}</b></td><td>${esc(r.cliente)}</td><td><b>${esc(r.referencia)}</b></td><td>${esc(r.descripcion)}</td><td>${esc(defectologyOf(r))}</td><td>${esc(r.cantidad)}</td><td>${esc(r.of||r.piezasFabricadasTotal)}</td><td>${esc(r.cantidadRechazadaRps)}</td><td>${esc(r.cantidadFabricada)}</td><td>${esc(r.cantidadFabricadaMes)}</td><td>${esc(pctMes(r))}</td><td>${esc(ppmMes(r))}</td><td>${esc(pctAnual(r))}</td><td>${esc(ppmAnual(r))}</td><td><span class="badge ${badge(r.severidad)}">${esc(r.severidad)}</span></td><td>${esc(r.responsable)}</td><td>${esc(r.fechaReclamacion)}</td><td>${esc(r.fechaPrevista)}</td><td>${esc(r.fechaReal)}</td><td><span class="badge ${badge(r.situacion)}">${esc(r.situacion)}</span></td><td><span class="badge ${badge(r.enPlazo)}">${esc(r.enPlazo)}</span></td><td>${esc(r.requiere8d)}</td><td>${esc(r.contencion)}</td><td>${esc(r.causa)}</td><td>${esc(r.acciones)}</td><td>${actionButtons}</td></tr>`}).join(''); const a=selectedScope(false); document.getElementById('kpiTotal').textContent=a.length;document.getElementById('kpiOpen').textContent=a.filter(r=>r.situacion==='Iniciada').length;document.getElementById('kpiClosed').textContent=a.filter(r=>r.situacion==='Realizada').length;document.getElementById('kpiLate').textContent=a.filter(r=>r.enPlazo==='N').length;document.getElementById('kpi8d').textContent=a.filter(r=>r.requiere8d==='SI').length;document.getElementById('kpiCliente').textContent=a.filter(r=>r.origen==='RECLAMACION CLIENTE').length;document.getElementById('kpiInternas').textContent=a.filter(r=>r.origen==='INTERNA').length;document.getElementById('kpiSeveras').textContent=a.filter(r=>['Alta','Crítica'].includes(r.severidad)).length;refreshAnalysisSelect();renderCharts();}
 function renderChart(id,data){const el=document.getElementById(id); if(!el)return; const total=Object.values(data).reduce((a,b)=>a+b,0), max=Math.max(1,...Object.values(data)); el.innerHTML=Object.entries(data).filter(([k,v])=>v||total===0).map(([k,v])=>{const cls=v/max>.66?'bad-fill':v/max>.33?'warn-fill':'';return `<div class="bar-row"><span>${esc(k)}</span><div class="track"><div class="fill ${cls}" style="width:${v/max*100}%"></div></div><b>${v} (${total?Math.round(v/total*100):0}%)</b></div>`}).join('')||'<span class="note">Sin datos en este ámbito.</span>'}
 function countBy(field,labels,src){const d={};labels.forEach(l=>d[l]=0);src.forEach(r=>{const k=r[field]||'Sin dato';d[k]=(d[k]||0)+1});return d} function topBy(field,n,src){const d={};src.forEach(r=>{const k=r[field]||'Sin dato';d[k]=(d[k]||0)+1});return Object.fromEntries(Object.entries(d).sort((a,b)=>b[1]-a[1]).slice(0,n))}
