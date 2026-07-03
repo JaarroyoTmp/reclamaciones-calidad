@@ -103,7 +103,7 @@
 </style>
 </head>
 <body>
-<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V16: presentación semanal con reclamaciones desglosadas. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
+<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V17: presentación semanal sin resumen ejecutivo y con internas corregidas. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
 <main>
 <section class="card toolbar">
   <div><label>Buscar</label><input id="search" placeholder="Buscar cliente, referencia, defecto, responsable..."></div>
@@ -190,7 +190,7 @@
   </div>
 
   <div class="meeting-card">
-    <h3>Resumen ejecutivo para reunión</h3>
+    <h3>Resumen de la semana</h3>
     <div id="weeklyExecutive" class="meeting-summary-text"></div>
   </div>
 
@@ -224,7 +224,7 @@
 </main><div id="toast" class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260608_v16_desglose_reclamaciones';
+const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260608_v17_reunion_internas_ok';
 const SUPABASE_URL='https://lsfalvcfbssqxbhlsdjx.supabase.co';
 const SUPABASE_KEY='sb_publishable_FWi5H3uAP_yWvdqCNm6xyw_GdJqDAb8';
 const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -477,6 +477,7 @@ function claimCard(r,kind){
   </article>`;
 }
 
+
 function simpleDefect(r){
  try{return defectologyOf(r)||r.defectologia||'Sin clasificar'}catch(e){return r.defectologia||'Sin clasificar'}
 }
@@ -490,6 +491,17 @@ function severityTagClass(r){
  if(s.includes('CRIT')||s.includes('ALTA'))return 'red';
  if(s.includes('MEDIA'))return 'orange';
  return 'green';
+}
+function countRowsBy(arr,fn){
+ const m={};
+ arr.forEach(x=>{
+   const k=fn(x)||'Sin dato';
+   m[k]=(m[k]||0)+1;
+ });
+ return m;
+}
+function topRowsEntries(map,n=5){
+ return Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,n);
 }
 function weeklyClaimCard(r,kind){
  const what=simpleVal(r.descripcion||r.noConformidad||r.contencion,'Sin descripción registrada');
@@ -553,9 +565,10 @@ function renderWeeklyMeeting(){
     ? internal.map(r=>weeklyClaimCard(r,'internal')).join('')
     : '<div class="weekly-empty">No hay NC internas en esta semana.</div>');
 
-  const topCli=topEntries(countBy(rows,r=>r.cliente),3);
-  const topRef=topEntries(countBy(rows,r=>r.referencia),3);
-  const topDef=topEntries(countBy(rows,r=>simpleDefect(r)),3);
+  const topCli=topRowsEntries(countRowsBy(rows,r=>r.cliente),3);
+  const topRef=topRowsEntries(countRowsBy(rows,r=>r.referencia),3);
+  const topDef=topRowsEntries(countRowsBy(rows,r=>simpleDefect(r)),3);
+
   const msg=[];
   msg.push(`<p>En el periodo seleccionado se han registrado <b>${rows.length}</b> reclamaciones / NC: <b>${external.length}</b> externas de cliente y <b>${internal.length}</b> internas.</p>`);
   if(altaRows.length)msg.push(`<p>Hay <b>${altaRows.length}</b> casos de severidad Alta/Crítica que deben revisarse de forma prioritaria.</p>`);
@@ -563,15 +576,15 @@ function renderWeeklyMeeting(){
   if(topCli.length)msg.push(`<p><b>Cliente más repetido esta semana:</b> ${esc(topCli[0][0])} (${topCli[0][1]} casos).</p>`);
   if(topRef.length)msg.push(`<p><b>Referencia más repetida:</b> ${esc(topRef[0][0])} (${topRef[0][1]} casos).</p>`);
   if(topDef.length)msg.push(`<p><b>Defectología dominante:</b> ${esc(topDef[0][0])} (${topDef[0][1]} casos).</p>`);
-  set('weeklyExecutive',msg.join('')||'<p class="note">Sin datos para construir resumen ejecutivo.</p>');
+  set('weeklyExecutive',msg.join('')||'<p class="note">Sin datos para construir resumen semanal.</p>');
 
   const risk=weeklyOpenRiskRows();
   set('weeklyPriorityList',risk.length?risk.map(r=>`<div class="meeting-item ${meetingSeverityClass(r)}"><b>${esc(r.numero)}</b> · ${esc(r.cliente)} · ${esc(r.referencia)}<div>${esc(actionExpected(r))}</div><div class="meta">Prevista: ${esc(r.fechaPrevista||'Sin fecha')} · Estado: ${esc(r.situacion)} · Plazo: ${esc(r.enPlazo)} · 8D: ${esc(r.requiere8d)}</div></div>`).join(''):'<p class="note">No hay prioridades abiertas críticas/vencidas.</p>');
 
   set('weeklyTops',`<table class="meeting-table"><tbody>
-   <tr><th colspan="2">Clientes</th></tr>${topEntries(countBy(rows,r=>r.cliente),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}
-   <tr><th colspan="2">Referencias</th></tr>${topEntries(countBy(rows,r=>r.referencia),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}
-   <tr><th colspan="2">Defectologías</th></tr>${topEntries(countBy(rows,r=>simpleDefect(r)),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}
+   <tr><th colspan="2">Clientes</th></tr>${topRowsEntries(countRowsBy(rows,r=>r.cliente),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}
+   <tr><th colspan="2">Referencias</th></tr>${topRowsEntries(countRowsBy(rows,r=>r.referencia),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}
+   <tr><th colspan="2">Defectologías</th></tr>${topRowsEntries(countRowsBy(rows,r=>simpleDefect(r)),5).map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('')||'<tr><td colspan="2">Sin datos</td></tr>'}
   </tbody></table>`);
  }catch(e){
   console.error('Error renderWeeklyMeeting',e);
