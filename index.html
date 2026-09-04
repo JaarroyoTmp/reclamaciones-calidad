@@ -116,7 +116,7 @@
 </style>
 </head>
 <body>
-<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V21: carga completa paginada del maestro de artículos. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
+<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V22: carga total de artículos sin filtrar por estado. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
 <main>
 <section class="card toolbar">
   <div><label>Buscar</label><input id="search" placeholder="Buscar cliente, referencia, defecto, responsable..."></div>
@@ -135,7 +135,7 @@
 <label>Referencia</label>
 <select id="referencia" onchange="handleReferenciaChange()" required>
   <option value="">Seleccione cliente primero...</option>
-</select><small style="display:block;margin-top:5px;color:#64748b;font-size:11px">Listado cargado desde <b>public.articulos</b> de Supabase.</small>
+</select><small style="display:block;margin-top:5px;color:#64748b;font-size:11px">Listado cargado desde <b>public.articulos</b> de Supabase. <span id="articulosCount"></span></small>
 <div id="referenciaManualWrap" class="manual-ref-wrap">
   <input id="referenciaManual" type="text" placeholder="Escriba la referencia exacta..." oninput="handleReferenciaManualInput()">
   <small class="manual-ref-note">Use esta opción solo cuando la referencia nueva todavía no exista en el maestro de artículos de Supabase.</small>
@@ -241,7 +241,7 @@
 </main><div id="toast" class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260904_v21_articulos_paginados';
+const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260904_v22_articulos_total';
 const SUPABASE_URL='https://lsfalvcfbssqxbhlsdjx.supabase.co';
 const SUPABASE_KEY='sb_publishable_FWi5H3uAP_yWvdqCNm6xyw_GdJqDAb8';
 const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -288,7 +288,7 @@ async function loadArticulosMaestro(){
     while(true){
       const {data,error}=await supabaseClient
         .from('articulos')
-        .select('referencia,descripcion,cliente,familia,estado')
+        .select('id,referencia,descripcion,cliente,familia,estado')
         .order('id',{ascending:true})
         .range(from, from+pageSize-1);
 
@@ -301,17 +301,21 @@ async function loadArticulosMaestro(){
       from+=pageSize;
     }
 
+    // V22: NO filtramos por estado. Se cargan todos los artículos que tengan referencia.
     articulosMaestro=all
-      .filter(a=>normTxt(a.referencia) && (!a.estado || normUp(a.estado)==='ACTIVO'))
+      .filter(a=>normTxt(a.referencia))
       .map(a=>({
+        id:a.id,
         referencia:normTxt(a.referencia),
         descripcion:normTxt(a.descripcion),
         cliente:normTxt(a.cliente),
         familia:normTxt(a.familia),
-        estado:normTxt(a.estado)||'ACTIVO'
+        estado:normTxt(a.estado)
       }));
 
-    console.log('Artículos cargados desde Supabase:', articulosMaestro.length);
+    console.log('Filas totales leídas de public.articulos:', all.length);
+    console.log('Artículos con referencia cargados:', articulosMaestro.length);
+    console.log('Referencias únicas:', new Set(articulosMaestro.map(a=>normUp(a.referencia))).size);
   }catch(e){
     console.error(e);
     toast('No se pudo leer el maestro completo de artículos. Se usarán referencias históricas como respaldo.','error');
@@ -325,9 +329,22 @@ function clientesAlta(){
 }
 
 function referenciasAlta(){
+  // Todas las referencias de public.articulos, sin filtrar por estado.
   let refs=articulosMaestro.map(a=>a.referencia).filter(Boolean);
   if(!refs.length) refs=records.map(r=>r.referencia).filter(Boolean);
-  return [...new Set(refs.map(normTxt).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
+
+  // Se elimina únicamente la duplicidad exacta de la misma referencia.
+  const seen=new Set();
+  const unique=[];
+  refs.forEach(r=>{
+    const key=normUp(r);
+    if(!seen.has(key)){
+      seen.add(key);
+      unique.push(normTxt(r));
+    }
+  });
+
+  return unique.sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
 }
 
 function populateAltaClientes(selectedCliente='', selectedReferencia=''){
@@ -339,11 +356,17 @@ function populateAltaClientes(selectedCliente='', selectedReferencia=''){
 function populateReferenciaAlta(selectedReferencia=''){
   const refSel=document.getElementById('referencia'); if(!refSel)return;
   const refs=referenciasAlta();
+  const countEl=document.getElementById('articulosCount');
+  if(countEl)countEl.textContent=`(${articulosMaestro.length} filas / ${refs.length} referencias únicas)`;
   const manualWrap=document.getElementById('referenciaManualWrap');
   const manualInput=document.getElementById('referenciaManual');
 
   refSel.innerHTML='<option value="">Seleccione referencia...</option>';
-  refSel.innerHTML+=refs.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
+  refSel.innerHTML+=refs.map(r=>{
+    const art=articulosMaestro.find(a=>normUp(a.referencia)===normUp(r));
+    const desc=art&&art.descripcion?` — ${art.descripcion}`:'';
+    return `<option value="${esc(r)}">${esc(r+desc)}</option>`;
+  }).join('');
   refSel.innerHTML+='<option value="__MANUAL__">➕ Referencia nueva / no aparece en el maestro</option>';
 
   if(selectedReferencia){
