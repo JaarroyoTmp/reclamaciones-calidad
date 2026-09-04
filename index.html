@@ -116,7 +116,7 @@
 </style>
 </head>
 <body>
-<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V20: referencias desde maestro articulos y cliente manual. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
+<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V21: carga completa paginada del maestro de artículos. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
 <main>
 <section class="card toolbar">
   <div><label>Buscar</label><input id="search" placeholder="Buscar cliente, referencia, defecto, responsable..."></div>
@@ -241,7 +241,7 @@
 </main><div id="toast" class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260904_v20_articulos_global_cliente_manual';
+const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260904_v21_articulos_paginados';
 const SUPABASE_URL='https://lsfalvcfbssqxbhlsdjx.supabase.co';
 const SUPABASE_KEY='sb_publishable_FWi5H3uAP_yWvdqCNm6xyw_GdJqDAb8';
 const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -279,21 +279,45 @@ function normUp(v){return normTxt(v).toUpperCase();}
 async function loadArticulosMaestro(){
   articulosMaestro=[];
   if(!USE_SUPABASE)return;
+
   try{
-    const {data,error}=await supabaseClient
-      .from('articulos')
-      .select('referencia,descripcion,cliente,familia,estado')
-      .order('cliente',{ascending:true})
-      .order('referencia',{ascending:true});
-    if(error)throw error;
-    articulosMaestro=(data||[])
+    const pageSize=1000;
+    let from=0;
+    let all=[];
+
+    while(true){
+      const {data,error}=await supabaseClient
+        .from('articulos')
+        .select('referencia,descripcion,cliente,familia,estado')
+        .order('id',{ascending:true})
+        .range(from, from+pageSize-1);
+
+      if(error)throw error;
+
+      const batch=data||[];
+      all=all.concat(batch);
+
+      if(batch.length<pageSize)break;
+      from+=pageSize;
+    }
+
+    articulosMaestro=all
       .filter(a=>normTxt(a.referencia) && (!a.estado || normUp(a.estado)==='ACTIVO'))
-      .map(a=>({referencia:normTxt(a.referencia),descripcion:normTxt(a.descripcion),cliente:normTxt(a.cliente),familia:normTxt(a.familia),estado:normTxt(a.estado)||'ACTIVO'}));
+      .map(a=>({
+        referencia:normTxt(a.referencia),
+        descripcion:normTxt(a.descripcion),
+        cliente:normTxt(a.cliente),
+        familia:normTxt(a.familia),
+        estado:normTxt(a.estado)||'ACTIVO'
+      }));
+
+    console.log('Artículos cargados desde Supabase:', articulosMaestro.length);
   }catch(e){
     console.error(e);
-    toast('No se pudo leer la tabla articulos. Cliente/referencia usarán datos ya existentes.','error');
+    toast('No se pudo leer el maestro completo de artículos. Se usarán referencias históricas como respaldo.','error');
   }
 }
+
 function clientesAlta(){
   const fromArt=articulosMaestro.map(a=>a.cliente).filter(Boolean);
   const fromRec=records.map(r=>r.cliente).filter(Boolean);
