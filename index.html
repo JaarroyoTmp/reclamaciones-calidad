@@ -116,7 +116,7 @@
 </style>
 </head>
 <body>
-<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V19: referencia manual controlada cuando no existe en el maestro. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
+<header><h1>Histórico de Reclamaciones, Incidencias y No Conformidades</h1><p><b>VERSIÓN ACTUALIZADA V20: referencias desde maestro articulos y cliente manual. Defectología real en Supabase, OF, cantidades productivas, análisis mensual/anual, edición y borrado.</b><br>Seguimiento técnico con enfoque 8D, causa raíz, contención, acciones correctivas, auditoría interna y alineación ISO 9001 / IATF 16949 / AS-EN 9100. Los indicadores se calculan por ámbito definido: periodo, cliente, origen y severidad.</p></header>
 <main>
 <section class="card toolbar">
   <div><label>Buscar</label><input id="search" placeholder="Buscar cliente, referencia, defecto, responsable..."></div>
@@ -131,11 +131,11 @@
 <section id="scopeBanner" class="card scope-banner"><div><strong>Ámbito de análisis</strong><small id="scopeText">Todos los registros activos.</small></div><button class="secondary" onclick="resetScope()">Limpiar filtros</button></section>
 <section class="kpis"><div class="card kpi"><div>Total activas</div><strong id="kpiTotal">0</strong><small>Registros del ámbito</small></div><div class="card kpi"><div>Iniciadas</div><strong id="kpiOpen">0</strong><small>Pendientes de cierre</small></div><div class="card kpi"><div>Realizadas</div><strong id="kpiClosed">0</strong><small>Con cierre registrado</small></div><div class="card kpi"><div>Fuera plazo</div><strong id="kpiLate">0</strong><small>Riesgo de respuesta</small></div><div class="card kpi"><div>Requieren 8D</div><strong id="kpi8d">0</strong><small>Análisis formal</small></div><div class="card kpi"><div>Cliente</div><strong id="kpiCliente">0</strong><small>Impacto externo</small></div><div class="card kpi"><div>Internas</div><strong id="kpiInternas">0</strong><small>Detección interna</small></div><div class="card kpi"><div>Alta/crítica</div><strong id="kpiSeveras">0</strong><small>Riesgo elevado</small></div></section>
 <section class="card tabs"><button onclick="showPanel('alta')">Alta</button><button class="secondary" onclick="showPanel('analisis')">Análisis y cierre</button><button class="secondary" onclick="showPanel('indicadores')">Indicadores / auditoría</button><button class="secondary" onclick="showPanel('seguimiento')">Seguimiento</button><button class="meeting-btn" onclick="showPanel('reunion');renderWeeklyMeeting()">📊 Reunión semanal</button><a href="./auditorias/auditorias.html" style="display:inline-flex;align-items:center;justify-content:center;min-width:210px;border-radius:10px;padding:10px 16px;font-weight:900;text-decoration:none;background:linear-gradient(135deg,#7c3aed,#be123c);color:white;box-shadow:0 10px 22px rgba(124,58,237,.25)">🔎 Auditorías internas</a><button class="danger" onclick="restoreSeed()">Restaurar histórico</button><button class="secondary" onclick="syncAllToSupabase()">Sincronizar BD</button></section>
-<section id="alta" class="card panel active"><h2>Alta de incidencia / reclamación</h2><div class="form-grid"><div><label>Origen</label><select id="origen" onchange="handleOriginChange()"><option>RECLAMACION CLIENTE</option><option>INTERNA</option></select></div><div><label>Nº incidencia</label><input id="numero"></div><div><label>Sección</label><input id="seccion" value="CALIDAD"></div><div><label>Cliente</label><select id="cliente" onchange="handleClienteChange()" required><option value="">Seleccione cliente...</option></select></div><div>
+<section id="alta" class="card panel active"><h2>Alta de incidencia / reclamación</h2><div class="form-grid"><div><label>Origen</label><select id="origen" onchange="handleOriginChange()"><option>RECLAMACION CLIENTE</option><option>INTERNA</option></select></div><div><label>Nº incidencia</label><input id="numero"></div><div><label>Sección</label><input id="seccion" value="CALIDAD"></div><div><label>Cliente</label><input id="cliente" type="text" placeholder="Escriba cliente..." required></div><div>
 <label>Referencia</label>
 <select id="referencia" onchange="handleReferenciaChange()" required>
   <option value="">Seleccione cliente primero...</option>
-</select>
+</select><small style="display:block;margin-top:5px;color:#64748b;font-size:11px">Listado cargado desde <b>public.articulos</b> de Supabase.</small>
 <div id="referenciaManualWrap" class="manual-ref-wrap">
   <input id="referenciaManual" type="text" placeholder="Escriba la referencia exacta..." oninput="handleReferenciaManualInput()">
   <small class="manual-ref-note">Use esta opción solo cuando la referencia nueva todavía no exista en el maestro de artículos de Supabase.</small>
@@ -241,7 +241,7 @@
 </main><div id="toast" class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260904_v19_referencia_manual';
+const APP_PIN='1234'; const APP_VERSION='hist_norma_pro_20260904_v20_articulos_global_cliente_manual';
 const SUPABASE_URL='https://lsfalvcfbssqxbhlsdjx.supabase.co';
 const SUPABASE_KEY='sb_publishable_FWi5H3uAP_yWvdqCNm6xyw_GdJqDAb8';
 const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -299,45 +299,36 @@ function clientesAlta(){
   const fromRec=records.map(r=>r.cliente).filter(Boolean);
   return [...new Set([...fromArt,...fromRec].map(normTxt).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
 }
-function referenciasClienteAlta(cliente){
-  const c=normUp(cliente);
-  let refs=articulosMaestro.filter(a=>!c || normUp(a.cliente)===c).map(a=>a.referencia).filter(Boolean);
-  if(!refs.length && c) refs=records.filter(r=>normUp(r.cliente)===c).map(r=>r.referencia).filter(Boolean);
-  return [...new Set(refs.map(normTxt).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+
+function referenciasAlta(){
+  let refs=articulosMaestro.map(a=>a.referencia).filter(Boolean);
+  if(!refs.length) refs=records.map(r=>r.referencia).filter(Boolean);
+  return [...new Set(refs.map(normTxt).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true}));
 }
+
 function populateAltaClientes(selectedCliente='', selectedReferencia=''){
-  const clienteSel=document.getElementById('cliente'); if(!clienteSel)return;
-  const current=selectedCliente||clienteSel.value;
-  const clients=clientesAlta();
-  clienteSel.innerHTML='<option value="">Seleccione cliente...</option>'+clients.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
-  if(current && !clients.includes(current)) clienteSel.innerHTML+=`<option value="${esc(current)}">${esc(current)}</option>`;
-  clienteSel.value=current||'';
-  populateReferenciaAlta(clienteSel.value, selectedReferencia||document.getElementById('referencia')?.value||'');
+  const cliente=document.getElementById('cliente');
+  if(cliente) cliente.value=selectedCliente||'';
+  populateReferenciaAlta(selectedReferencia||'');
 }
-function populateReferenciaAlta(cliente, selectedReferencia=''){
+
+function populateReferenciaAlta(selectedReferencia=''){
   const refSel=document.getElementById('referencia'); if(!refSel)return;
-  const refs=referenciasClienteAlta(cliente);
+  const refs=referenciasAlta();
   const manualWrap=document.getElementById('referenciaManualWrap');
   const manualInput=document.getElementById('referenciaManual');
 
-  refSel.innerHTML=cliente
-    ? '<option value="">Seleccione referencia...</option>'
-    : '<option value="">Seleccione cliente primero...</option>';
-
+  refSel.innerHTML='<option value="">Seleccione referencia...</option>';
   refSel.innerHTML+=refs.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
-
-  if(cliente){
-    refSel.innerHTML+='<option value="__MANUAL__">➕ Referencia nueva / no aparece en la lista</option>';
-  }
+  refSel.innerHTML+='<option value="__MANUAL__">➕ Referencia nueva / no aparece en el maestro</option>';
 
   if(selectedReferencia){
-    const existe=refs.some(r=>normUp(r)===normUp(selectedReferencia));
-    if(existe){
-      const encontrada=refs.find(r=>normUp(r)===normUp(selectedReferencia));
-      refSel.value=encontrada||selectedReferencia;
+    const encontrada=refs.find(r=>normUp(r)===normUp(selectedReferencia));
+    if(encontrada){
+      refSel.value=encontrada;
       if(manualInput)manualInput.value='';
       if(manualWrap)manualWrap.classList.remove('show');
-    }else if(cliente){
+    }else{
       refSel.value='__MANUAL__';
       if(manualInput)manualInput.value=selectedReferencia;
       if(manualWrap)manualWrap.classList.add('show');
@@ -355,13 +346,7 @@ function getReferenciaAlta(){
   return normTxt(sel);
 }
 
-function handleClienteChange(){
-  const manualInput=document.getElementById('referenciaManual');
-  const manualWrap=document.getElementById('referenciaManualWrap');
-  if(manualInput)manualInput.value='';
-  if(manualWrap)manualWrap.classList.remove('show');
-  populateReferenciaAlta(val('cliente'),'');
-}
+function handleClienteChange(){}
 
 function handleReferenciaChange(){
   const refSel=document.getElementById('referencia');
@@ -380,11 +365,6 @@ function handleReferenciaChange(){
 
   if(manualWrap)manualWrap.classList.remove('show');
   if(manualInput)manualInput.value='';
-
-  const ref=normTxt(selected); if(!ref)return;
-  const cliente=val('cliente');
-  const art=articulosMaestro.find(a=>normUp(a.referencia)===normUp(ref) && (!cliente || normUp(a.cliente)===normUp(cliente)));
-  if(art && !cliente) populateAltaClientes(art.cliente, art.referencia);
 }
 
 function handleReferenciaManualInput(){
@@ -392,6 +372,7 @@ function handleReferenciaManualInput(){
   if(!input)return;
   input.value=input.value.replace(/\s{2,}/g,' ').trimStart();
 }
+
 function dbDate(v){if(!v)return null; const s=String(v).trim(); return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:null;}
 function dbNum(v){if(v===undefined||v===null||String(v).trim()==='')return null; const n=Number(String(v).replace(',','.')); return Number.isFinite(n)?n:null;}
 function fromDb(r){return {id:r.id||'',origen:r.origen||'',numero:r.numero||'',seccion:r.seccion||'',cliente:r.cliente||'',referencia:r.referencia||'',descripcion:r.descripcion||'',responsable:r.responsable||'',fechaReclamacion:r.fecha_reclamacion||'',fechaPrevista:r.fecha_prevista||'',fechaReal:r.fecha_real||'',situacion:r.situacion||'Iniciada',enPlazo:r.en_plazo||'Pendiente',comentarios:r.comentarios||'',requiere8d:r.requiere_8d||'NO',noConformidad:r.no_conformidad||'',contencion:r.contencion||'',fechaContencion:r.fecha_contencion||'',respContencion:r.resp_contencion||'',causa:r.causa||'',fechaCausa:r.fecha_causa||'',respCausa:r.resp_causa||'',deteccion:r.deteccion||'',acciones:r.acciones||'',fechaAcciones:r.fecha_acciones||'',respAcciones:r.resp_acciones||'',cantidad:r.cantidad??'',of:r.of??'',cantidadRechazadaRps:r.cantidad_rechazada_rps??'',cantidadFabricada:r.cantidad_fabricada??'',cantidadFabricadaMes:r.cantidad_fabricada_mes??'',piezasFabricadasTotal:r.of??'',defectologia:r.defectologia||'',severidad:r.severidad||'Media',motivoAnulacion:r.motivo_anulacion||'',fechaAnulacion:r.fecha_anulacion||'',createdAt:r.created_at||r.createdAt||''};}
@@ -469,7 +450,7 @@ function loadEditRecord(id){
  document.getElementById('editModeBanner').classList.add('show');
  toast('Modo edición cargado. Modifica y pulsa Guardar cambios.','ok')
 }
-async function secureSaveEditRecord(){if(!editingId)return toast('No hay registro en edición.','error'); if(!requirePin())return toast('PIN incorrecto. No se ha actualizado.','error'); if(!val('cliente'))return toast('Debe seleccionar un cliente.','error'); const refAlta=getReferenciaAlta(); if(!refAlta)return toast('Debe seleccionar una referencia o escribirla manualmente.','error'); if(!val('numero'))return toast('Debe indicar código NC.','error'); const r=records.find(x=>x.id===editingId); if(!r)return; ['origen','numero','seccion','cliente','responsable','fechaReclamacion','severidad','defectologia','situacion','enPlazo','requiere8d','descripcion','defectologia','cantidad','of','cantidadRechazadaRps','cantidadFabricada','cantidadFabricadaMes'].forEach(f=>r[f]=val(f)); r.referencia=refAlta; r.piezasFabricadasTotal=val('of'); if(!r.fechaPrevista&&r.fechaReclamacion){const d=new Date(r.fechaReclamacion+'T00:00:00');d.setDate(d.getDate()+severityDays(r.severidad));r.fechaPrevista=d.toISOString().slice(0,10)} updateDerived(r); save(); const ok=await updateRecordSupabase(r); populateFilters(); render(); clearForm(); toast(ok?'Registro actualizado correctamente en Supabase.':'Registro actualizado solo en local.','ok')}
+async function secureSaveEditRecord(){if(!editingId)return toast('No hay registro en edición.','error'); if(!requirePin())return toast('PIN incorrecto. No se ha actualizado.','error'); if(!val('cliente'))return toast('Debe seleccionar un cliente.','error'); const refAlta=getReferenciaAlta(); if(!refAlta)return toast('Debe seleccionar una referencia del maestro de artículos o escribirla manualmente.','error'); if(!val('numero'))return toast('Debe indicar código NC.','error'); const r=records.find(x=>x.id===editingId); if(!r)return; ['origen','numero','seccion','cliente','responsable','fechaReclamacion','severidad','defectologia','situacion','enPlazo','requiere8d','descripcion','defectologia','cantidad','of','cantidadRechazadaRps','cantidadFabricada','cantidadFabricadaMes'].forEach(f=>r[f]=val(f)); r.referencia=refAlta; r.piezasFabricadasTotal=val('of'); if(!r.fechaPrevista&&r.fechaReclamacion){const d=new Date(r.fechaReclamacion+'T00:00:00');d.setDate(d.getDate()+severityDays(r.severidad));r.fechaPrevista=d.toISOString().slice(0,10)} updateDerived(r); save(); const ok=await updateRecordSupabase(r); populateFilters(); render(); clearForm(); toast(ok?'Registro actualizado correctamente en Supabase.':'Registro actualizado solo en local.','ok')}
 
 function formatDateTimeAlta(v){
  if(!v)return '';
@@ -720,7 +701,7 @@ function renderCharts(){const a=selectedScope(false), total=Math.max(1,a.length)
 function renderAuditRecommendations(src){const body=document.getElementById('auditRecommendationBody'); if(!body)return; const total=Math.max(1,src.length), ph=+val('auditPctHigh')||15, pm=+val('auditPctMedium')||8, sh=+val('auditSevereHigh')||2, lh=+val('auditLateHigh')||2; const g={};src.forEach(r=>{const ref=r.referencia||'Sin referencia';g[ref]=g[ref]||{total:0,severe:0,late:0,cliente:0,interna:0,closed:0};g[ref].total++; if(['Alta','Crítica'].includes(r.severidad))g[ref].severe++; if(r.enPlazo==='N')g[ref].late++; if(r.origen==='RECLAMACION CLIENTE')g[ref].cliente++; if(r.origen==='INTERNA')g[ref].interna++; if(r.fechaReal||r.situacion==='Realizada')g[ref].closed++;});body.innerHTML=Object.entries(g).map(([ref,d])=>{const pct=Math.round(d.total/total*100);let rec='Seguimiento normal',cls='ok',norm='Seguimiento SGQ',sem='🟢'; const recurrencia=d.total>=3?'Alta':d.total===2?'Media':'Baja'; if(pct>=ph||d.severe>=sh||d.late>=lh||d.total>=3){rec='Auditoría interna recomendada';cls='bad';sem='🔴';norm='ISO 9001 / IATF 16949 / AS-EN 9100: riesgos, recurrencia, producto no conforme y eficacia de acciones';} else if(pct>=pm||d.severe>=1||d.late>=1||d.total===2){rec='Revisión de proceso / plan de control';cls='warn';sem='🟠';norm='Control operacional, riesgos, AMFE/plan de control y acciones correctivas';} const lectura=`${d.total} registro(s), ${pct}% del ámbito, ${d.cliente} cliente, ${d.interna} internas, ${d.severe} alta/crítica y ${d.late} fuera de plazo.`;return {ref,...d,pct,rec,cls,norm,sem,recurrencia,lectura}}).sort((a,b)=>b.pct-a.pct||b.severe-a.severe||b.late-a.late).slice(0,12).map(r=>`<tr><td><span class="badge ${r.cls}">${r.sem}</span></td><td><b>${esc(r.ref)}</b></td><td>${r.total}</td><td>${r.pct}%</td><td>${r.cliente}</td><td>${r.interna}</td><td>${r.severe}</td><td>${r.late}</td><td>${r.recurrencia}</td><td>${esc(r.lectura)}</td><td>${esc(r.norm)}</td><td><span class="badge ${r.cls}">${esc(r.rec)}</span></td></tr>`).join('')||'<tr><td colspan="12">Sin datos en este ámbito.</td></tr>'}
 function renderAuditAlerts(src){const el=document.getElementById('auditAlerts'); if(!el)return; const total=Math.max(1,src.length); const byRef={};src.forEach(r=>{const ref=r.referencia||'Sin referencia';byRef[ref]=byRef[ref]||{total:0,severe:0,late:0,client:0};byRef[ref].total++;if(['Alta','Crítica'].includes(r.severidad))byRef[ref].severe++;if(r.enPlazo==='N')byRef[ref].late++;if(r.origen==='RECLAMACION CLIENTE')byRef[ref].client++;});const alerts=[];Object.entries(byRef).forEach(([ref,d])=>{const pct=Math.round(d.total/total*100); if(pct>=15||d.severe>=2||d.late>=2||d.total>=3)alerts.push({cls:'bad',txt:`Auditoría recomendada en ${ref}: ${d.total} registros (${pct}%), ${d.severe} alta/crítica, ${d.late} fuera de plazo, ${d.client} reclamaciones cliente.`}); else if(pct>=8||d.severe>=1||d.late>=1||d.total===2)alerts.push({cls:'warn',txt:`Revisión de proceso en ${ref}: señal temprana de recurrencia o riesgo (${d.total} registros, ${pct}%).`});}); if(!alerts.length)alerts.push({cls:'ok',txt:'No hay señales relevantes de concentración, recurrencia o severidad en el ámbito seleccionado.'}); el.innerHTML=alerts.slice(0,8).map(a=>`<div class="alert ${a.cls}">${esc(a.txt)}</div>`).join('');}
 function nextInternalNumber(){return nextNcCode('INTERNA')} function handleOriginChange(){const n=document.getElementById('numero'); if(!n)return; n.readOnly=false; if(!n.value || /^INT-|^EXT-/i.test(n.value))n.value=nextNcCode(val('origen'));}
-async function secureAddRecord(){if(!requirePin())return toast('PIN incorrecto. No se ha guardado.','error'); const r={id:'NEW-'+Date.now(),createdAt:new Date().toISOString(),origen:val('origen'),numero:val('numero')||nextNcCode(val('origen')),seccion:val('seccion'),cliente:val('cliente'),referencia:getReferenciaAlta(),descripcion:val('descripcion'),responsable:val('responsable'),fechaReclamacion:val('fechaReclamacion'),fechaPrevista:'',fechaReal:'',situacion:'Iniciada',enPlazo:'Pendiente',comentarios:'',requiere8d:val('requiere8d'),noConformidad:'',contencion:'',causa:'',deteccion:'',acciones:'',defectologia:val('defectologia'),cantidad:val('cantidad'),of:val('of'),piezasFabricadasTotal:val('of'),cantidadRechazadaRps:val('cantidadRechazadaRps'),cantidadFabricada:val('cantidadFabricada'),cantidadFabricadaMes:val('cantidadFabricadaMes'),severidad:val('severidad')}; if(!r.cliente)return toast('Debe seleccionar un cliente del maestro de artículos.','error'); if(!r.referencia)return toast('Debe seleccionar una referencia o escribirla manualmente.','error'); if(!r.defectologia)return toast('Debe seleccionar una defectología.','error'); if(!r.numero)r.numero=nextNcCode(r.origen); if(r.fechaReclamacion){const d=new Date(r.fechaReclamacion+'T00:00:00');d.setDate(d.getDate()+severityDays(r.severidad));r.fechaPrevista=d.toISOString().slice(0,10)} updateDerived(r); records.unshift(r);populateFilters();save(); const ok=await upsertRecordSupabase(r); render();clearForm();toast(ok?'Incidencia / reclamación guardada correctamente en Supabase.':'Incidencia guardada solo en local. Revisa Supabase. ',ok?'ok':'error')}
+async function secureAddRecord(){if(!requirePin())return toast('PIN incorrecto. No se ha guardado.','error'); const r={id:'NEW-'+Date.now(),createdAt:new Date().toISOString(),origen:val('origen'),numero:val('numero')||nextNcCode(val('origen')),seccion:val('seccion'),cliente:val('cliente'),referencia:getReferenciaAlta(),descripcion:val('descripcion'),responsable:val('responsable'),fechaReclamacion:val('fechaReclamacion'),fechaPrevista:'',fechaReal:'',situacion:'Iniciada',enPlazo:'Pendiente',comentarios:'',requiere8d:val('requiere8d'),noConformidad:'',contencion:'',causa:'',deteccion:'',acciones:'',defectologia:val('defectologia'),cantidad:val('cantidad'),of:val('of'),piezasFabricadasTotal:val('of'),cantidadRechazadaRps:val('cantidadRechazadaRps'),cantidadFabricada:val('cantidadFabricada'),cantidadFabricadaMes:val('cantidadFabricadaMes'),severidad:val('severidad')}; if(!r.cliente)return toast('Debe seleccionar un cliente del maestro de artículos.','error'); if(!r.referencia)return toast('Debe seleccionar una referencia del maestro de artículos o escribirla manualmente.','error'); if(!r.defectologia)return toast('Debe seleccionar una defectología.','error'); if(!r.numero)r.numero=nextNcCode(r.origen); if(r.fechaReclamacion){const d=new Date(r.fechaReclamacion+'T00:00:00');d.setDate(d.getDate()+severityDays(r.severidad));r.fechaPrevista=d.toISOString().slice(0,10)} updateDerived(r); records.unshift(r);populateFilters();save(); const ok=await upsertRecordSupabase(r); render();clearForm();toast(ok?'Incidencia / reclamación guardada correctamente en Supabase.':'Incidencia guardada solo en local. Revisa Supabase. ',ok?'ok':'error')}
 function clearForm(){['numero','cliente','referencia','responsable','fechaReclamacion','descripcion','defectologia','cantidad','of','cantidadRechazadaRps','cantidadFabricada','cantidadFabricadaMes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});document.getElementById('seccion').value='CALIDAD';document.getElementById('situacion').value='Iniciada';document.getElementById('enPlazo').value='Pendiente';editingId='';const rm=document.getElementById('referenciaManual');if(rm)rm.value='';const rw=document.getElementById('referenciaManualWrap');if(rw)rw.classList.remove('show');populateAltaClientes('','');document.getElementById('saveNewBtn').style.display='inline-block';document.getElementById('saveEditBtn').style.display='none';document.getElementById('editModeBanner').classList.remove('show');handleOriginChange();}
 function refreshAnalysisSelect(){const s=document.getElementById('analysisSelect'); if(!s)return; s.innerHTML=selectedScope(false).map(r=>`<option value="${esc(r.id)}">${esc(r.origen)} | ${esc(r.numero)} | ${esc(r.cliente)} | ${esc(r.referencia)}</option>`).join('')}
 function loadAnalysisRecord(){const r=records.find(x=>x.id===val('analysisSelect')); if(!r){renderAnalysisInfo(null);return;} renderAnalysisInfo(r); ['fechaPrevista','fechaReal','noConformidad','contencion','causa','deteccion','acciones','comentarios'].forEach(id=>document.getElementById(id).value=r[id]||'');document.getElementById('analysisEnPlazo').value=r.enPlazo||'Pendiente'}
